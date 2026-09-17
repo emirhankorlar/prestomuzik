@@ -1,1 +1,11 @@
-window.addEventListener('load',()=>setTimeout(()=>document.querySelector('.loader')?.classList.add('hide'),650));const h=document.querySelector('header');addEventListener('scroll',()=>h?.classList.toggle('scrolled',scrollY>40));const m=document.querySelector('.menu');m?.addEventListener('click',()=>document.querySelector('nav')?.classList.toggle('mobile'));document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();scrollTo({top:t.offsetTop-70,behavior:'smooth'})}}));const y=document.querySelector('#year');if(y)y.textContent=new Date().getFullYear();
+window.addEventListener("load",()=>setTimeout(()=>document.querySelector(".loader")?.classList.add("hide"),650));
+const header=document.querySelector(".header");
+window.addEventListener("scroll",()=>header?.classList.toggle("scrolled",scrollY>40));
+const menu=document.querySelector(".menu"), mobile=document.querySelector(".mobile-nav");
+menu?.addEventListener("click",()=>mobile.classList.toggle("open"));
+mobile?.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>mobile.classList.remove("open")));
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{const t=document.querySelector(a.getAttribute("href"));if(t){e.preventDefault();window.scrollTo({top:t.offsetTop-(header?.offsetHeight||0),behavior:"smooth"})}}));
+const observer=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("show");observer.unobserve(e.target)}}),{threshold:.12});
+document.querySelectorAll(".reveal").forEach(e=>observer.observe(e));
+document.querySelectorAll(".label,.intro-main,.service-list article,.studio-copy,.process-title,.process-grid article,.contact-right").forEach(e=>{e.classList.add("reveal");observer.observe(e)});
+const y=document.getElementById("year");if(y)y.textContent=new Date().getFullYear();
