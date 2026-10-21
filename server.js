@@ -116,7 +116,7 @@ async function download(url, base) {
   const name = `${base}${ext}`;
   await fsp.mkdir(UPLOADS, { recursive: true });
   await fsp.writeFile(path.join(UPLOADS, name), Buffer.from(await r.arrayBuffer()));
-  return `/uploads/${name}`;
+  return `uploads/${name}`;
 }
 
 /* ---------- spotify import ---------- */
@@ -201,7 +201,7 @@ async function api(req, res, pathname) {
     const file = `${slugify(path.basename(name, ext))}-${crypto.randomBytes(3).toString('hex')}${ext}`;
     await fsp.mkdir(UPLOADS, { recursive: true });
     await fsp.writeFile(path.join(UPLOADS, file), Buffer.from(b64, 'base64'));
-    return send(res, 200, { url: `/uploads/${file}` });
+    return send(res, 200, { url: `uploads/${file}` });
   }
 
   if (pathname === '/api/spotify' && req.method === 'POST') {
@@ -225,9 +225,11 @@ async function api(req, res, pathname) {
 
 async function serveStatic(req, res, pathname) {
   let rel = decodeURIComponent(pathname);
+  // eski adresler: /admin ve /sanatci/<slug> → göreli yollarla çalışan sayfalara yönlendir
+  const old = /^\/sanatci\/([^/]+)\/?$/.exec(rel);
+  if (old) { res.writeHead(301, { Location: `/artist.html?id=${encodeURIComponent(old[1])}` }); return res.end(); }
+  if (rel === '/admin' || rel === '/admin/') { res.writeHead(302, { Location: '/admin.html' }); return res.end(); }
   if (rel === '/') rel = '/index.html';
-  else if (rel === '/admin' || rel === '/admin/') rel = '/admin.html';
-  else if (/^\/sanatci\/[^/]+\/?$/.test(rel)) rel = '/artist.html';
 
   const file = path.normalize(path.join(PUBLIC, rel));
   if (!file.startsWith(PUBLIC)) return send(res, 403, 'Yasak');

@@ -5,18 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Yönetim — Presto Müzik</title>
-  <link rel="icon" href="/assets/favicon.png">
+  <link rel="icon" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/admin.css">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
   <div class="login" data-login hidden>
     <form class="login-card" data-login-form>
-      <img src="/assets/pm-logo.webp" alt="">
+      <img src="assets/pm-logo.webp" alt="">
       <h1>Presto Yönetim</h1>
-      <label>Şifre<input type="password" name="password" autocomplete="current-password" autofocus required></label>
+      <label data-login-password>Şifre<input type="password" name="password" autocomplete="current-password" autofocus></label>
+      <div class="gh-login" data-login-github hidden>
+        <p class="gh-note">Bu panel GitHub üzerinden çalışıyor. Giriş için repoya yazma izni olan bir <b>GitHub token</b> girin. Token hiçbir yere kaydedilmez, sekmeyi kapatınca silinir.</p>
+        <label>GitHub token<input type="password" name="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
+        <div class="gh-repo">
+          <label>Kullanıcı<input name="owner" spellcheck="false"></label>
+          <label>Repo<input name="repo" spellcheck="false"></label>
+          <label>Dal<input name="branch" spellcheck="false" value="main"></label>
+        </div>
+        <details class="gh-help"><summary>Token nasıl alınır?</summary>
+          <ol>
+            <li>GitHub → Settings → Developer settings → <b>Fine-grained tokens</b> → Generate new token</li>
+            <li>Repository access: <b>Only select repositories</b> → bu repo</li>
+            <li>Permissions: <b>Contents: Read and write</b>, <b>Actions: Read and write</b></li>
+            <li>Oluşan <code>github_pat_…</code> değerini buraya yapıştırın</li>
+          </ol>
+        </details>
+      </div>
       <button class="btn primary" type="submit">Giriş yap</button>
       <p class="err" data-login-err></p>
     </form>
@@ -24,10 +41,10 @@
 
   <div class="app" data-app hidden>
     <aside class="side">
-      <a class="side-brand" href="/" target="_blank"><img src="/assets/pm-logo.webp" alt=""><span>Presto<br><small>Yönetim paneli</small></span></a>
+      <a class="side-brand" href="./" target="_blank"><img src="assets/pm-logo.webp" alt=""><span>Presto<br><small>Yönetim paneli</small></span></a>
       <nav class="tabs" data-tabs></nav>
       <div class="side-foot">
-        <a class="btn ghost" href="/" target="_blank">Siteyi aç ↗</a>
+        <a class="btn ghost" href="./" target="_blank">Siteyi aç ↗</a>
         <button class="btn ghost" data-logout>Çıkış</button>
       </div>
     </aside>
@@ -46,6 +63,6 @@
     </main>
   </div>
   <div class="toast" data-toast></div>
-  <script type="module" src="/js/admin.js"></script>
+  <script type="module" src="js/admin.js"></script>
 </body>
 </html>

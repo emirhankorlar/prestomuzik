@@ -9,17 +9,17 @@
   <meta property="og:title" content="Presto Müzik — Kayıt & Prodüksiyon Stüdyosu">
   <meta property="og:description" content="Eskişehir'de kayıt, mix & mastering, beat prodüksiyon ve klip.">
   <meta property="og:image" content="/assets/studio/3.webp">
-  <link rel="icon" href="/assets/favicon.png">
+  <link rel="icon" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css">
-  <script type="importmap">{ "imports": { "three": "/vendor/three.module.min.js" } }</script>
+  <link rel="stylesheet" href="css/site.css">
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body>
   <div class="loader" aria-hidden="true">
     <div class="loader-inner">
-      <img src="/assets/pm-logo.webp" alt="">
+      <img src="assets/pm-logo.webp" alt="">
       <div class="loader-meter"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
       <div class="mono mute">Sinyal yükleniyor</div>
     </div>
@@ -28,7 +28,7 @@
   <canvas id="scene" aria-hidden="true"></canvas>
 
   <header class="nav">
-    <a class="brand" href="/" aria-label="Presto Müzik ana sayfa"><img src="/assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
+    <a class="brand" href="./" aria-label="Presto Müzik ana sayfa"><img src="assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
     <div class="timecode mono"><span class="rec-dot"></span>REC <span data-timecode>00:00:00:00</span></div>
     <nav class="nav-links">
       <a href="#studyo">Stüdyo</a>
@@ -157,6 +157,6 @@
     <figure><img alt="" data-lightbox-img><figcaption class="mono" data-lightbox-cap></figcaption></figure>
   </div>
 
-  <script type="module" src="/js/home.js"></script>
+  <script type="module" src="js/home.js"></script>
 </body>
 </html>

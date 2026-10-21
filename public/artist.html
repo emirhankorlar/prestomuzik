@@ -6,41 +6,41 @@
   <title>Sanatçı — Presto Müzik</title>
   <meta name="description" content="Presto Müzik sanatçısı.">
   <meta name="theme-color" content="#0b0907">
-  <link rel="icon" href="/assets/favicon.png">
+  <link rel="icon" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/css/site.css">
-  <link rel="stylesheet" href="/css/artist.css">
-  <script type="importmap">{ "imports": { "three": "/vendor/three.module.min.js" } }</script>
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/artist.css">
+  <script type="importmap">{ "imports": { "three": "./vendor/three.module.min.js" } }</script>
 </head>
 <body class="artist-page">
   <canvas id="scene" aria-hidden="true"></canvas>
 
   <header class="nav">
-    <a class="brand" href="/" aria-label="Presto Müzik ana sayfa"><img src="/assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
+    <a class="brand" href="./" aria-label="Presto Müzik ana sayfa"><img src="assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
     <div class="timecode mono"><span class="rec-dot"></span>REC <span data-timecode>00:00:00:00</span></div>
     <nav class="nav-links">
-      <a href="/">Ana Sayfa</a>
-      <a href="/#sanatcilar">Sanatçılar</a>
+      <a href="./">Ana Sayfa</a>
+      <a href="index.html#sanatcilar">Sanatçılar</a>
       <a href="#parcalar">Parçalar</a>
       <a href="#videolar">Videolar</a>
-      <a class="btn" href="/#iletisim">Stüdyo</a>
+      <a class="btn" href="index.html#iletisim">Stüdyo</a>
     </nav>
     <button class="menu-btn" aria-label="Menü"><span></span><span></span></button>
   </header>
   <div class="mobile-menu">
-    <a class="display" href="/">Ana Sayfa</a>
-    <a class="display" href="/#sanatcilar">Sanatçılar</a>
+    <a class="display" href="./">Ana Sayfa</a>
+    <a class="display" href="index.html#sanatcilar">Sanatçılar</a>
     <a class="display" href="#parcalar">Parçalar</a>
     <a class="display" href="#videolar">Videolar</a>
-    <a class="display accent" href="/#iletisim">İletişim</a>
+    <a class="display accent" href="index.html#iletisim">İletişim</a>
   </div>
 
   <main id="app">
     <section class="a-hero">
       <div class="a-hero-top mono">
-        <a href="/" class="a-back">← Ana sayfaya dön</a>
+        <a href="./" class="a-back">← Ana sayfaya dön</a>
         <span data-role></span>
       </div>
       <div class="a-hero-main">
@@ -95,6 +95,6 @@
 
   <footer class="footer" data-footer></footer>
 
-  <script type="module" src="/js/artist.js"></script>
+  <script type="module" src="js/artist.js"></script>
 </body>
 </html>

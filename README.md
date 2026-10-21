@@ -23,7 +23,22 @@ Node 18 veya üzeri gerekir.
 - **Hizmetler**, **Stüdyo galerisi**, **Klipler**
 - Her kayıtta eski içerik `data/backups/` klasörüne yedeklenir (son 30 kayıt).
 
-## Yayına alma
+## GitHub Pages ile yayın (sunucusuz)
+
+`main` dalına her push'ta `.github/workflows/pages.yml` siteyi Pages'e yayınlar
+(repo ayarlarında **Settings → Pages → Source: GitHub Actions** seçili olmalı).
+
+- Site: `https://<kullanıcı>.github.io/<repo>/`
+- Admin: `https://<kullanıcı>.github.io/<repo>/admin.html` — giriş şifreyle değil, **GitHub token** ile yapılır.
+  Token hiçbir yere kaydedilmez, sadece o sekmede tutulur.
+  - GitHub → Settings → Developer settings → **Fine-grained tokens** → Generate new token
+  - Repository access: sadece bu repo
+  - Permissions: **Contents: Read and write**, **Actions: Read and write**
+- Kaydet'e basınca `data/content.json` repoya commit edilir, site ~1 dakikada güncellenir.
+- Yüklenen görseller/sesler `public/uploads/` klasörüne commit edilir.
+- "Spotify'dan çek" butonu `.github/workflows/spotify-import.yml` işini tetikler (~1 dk sürer).
+
+## Kendi sunucunda yayın
 
 Node.js çalıştırabilen her yerde çalışır: VPS, cPanel "Setup Node.js App", Render, Railway vb.
 Başlangıç dosyası `server.js`. Yayına alırken sunucuda **`data/` ve `public/uploads/` klasörleri kalıcı olmalı**,

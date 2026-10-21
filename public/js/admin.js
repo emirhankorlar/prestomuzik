@@ -1,4 +1,5 @@
 // Presto yönetim paneli — şemadan form üretir, içeriği tek JSON olarak kaydeder.
+import { createBackend, guessRepo } from './admin-backend.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const h = (tag, attrs = {}, ...kids) => {
@@ -22,12 +23,12 @@ let content = null;
 let dirty = false;
 let tab = 'artists';
 
-async function api(path, opts = {}) {
-  const r = await fetch(path, { ...opts, headers: { 'Content-Type': 'application/json' }, body: opts.body && JSON.stringify(opts.body) });
-  const data = await r.json().catch(() => ({}));
-  if (r.status === 401 && path !== '/api/login') { showLogin(); throw new Error('Oturum süresi doldu'); }
-  if (!r.ok) throw new Error(data.error || 'Hata');
-  return data;
+const backend = await createBackend();
+
+// oturum düşerse giriş ekranına dön
+async function call(fn) {
+  try { return await fn(); }
+  catch (err) { if (err.status === 401) showLogin(); throw err; }
 }
 
 function toast(msg, bad = false) {
@@ -51,7 +52,7 @@ addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.ret
 async function uploadFile(file) {
   if (file.size > 24 * 1024 * 1024) throw new Error('Dosya 24MB\'dan büyük olamaz');
   const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
-  return (await api('/api/upload', { method: 'POST', body: { name: file.name, data } })).url;
+  return call(() => backend.upload(file, data));
 }
 
 /* ---------- şema ---------- */
@@ -184,8 +185,8 @@ function field(f, obj, rerender) {
     }
     case 'image': case 'audio': {
       const isImg = f.type === 'image';
-      const preview = isImg ? (val ? h('img', { src: val, alt: '' }) : h('div', { class: 'ph' })) : h('audio', { controls: true, src: val || '', preload: 'none' });
-      const url = h('input', { value: val || '', placeholder: '/uploads/… ya da https://…', oninput: (e) => { set(e.target.value); if (isImg) preview.src = e.target.value; else preview.src = e.target.value; } });
+      const preview = isImg ? (val ? h('img', { src: backend.preview(val), alt: '' }) : h('div', { class: 'ph' })) : h('audio', { controls: true, src: backend.preview(val) || '', preload: 'none' });
+      const url = h('input', { value: val || '', placeholder: 'uploads/… ya da https://…', oninput: (e) => { set(e.target.value); preview.src = backend.preview(e.target.value); } });
       const btn = h('label', { class: 'btn sm upload' }, 'Dosya yükle', h('input', { type: 'file', accept: isImg ? 'image/*' : 'audio/*', onchange: async (e) => {
         const file = e.target.files[0]; if (!file) return;
         btn.firstChild.textContent = 'Yükleniyor…';
@@ -219,7 +220,7 @@ function listEditor(schema, arr, rerender) {
     const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
     const det = h('details', { class: 'item', open: open.has(item), ontoggle: (e) => (e.target.open ? open.add(item) : open.delete(item)) },
       h('summary', {},
-        schema.thumb && (thumb ? h('img', { class: 'thumb', src: thumb, alt: '' }) : h('div', { class: 'thumb' })),
+        schema.thumb && (thumb ? h('img', { class: 'thumb', src: backend.preview(thumb), alt: '' }) : h('div', { class: 'thumb' })),
         h('span', { class: 't' }, title || '…', sub && h('small', {}, sub)),
         h('span', { class: 'ctrls' },
           h('button', { class: 'icon-btn', title: 'Yukarı', onclick: stop(() => move(i, -1)) }, '↑'),
@@ -239,7 +240,7 @@ function spotifyImport(artist, rerender) {
     btn.disabled = true; btn.textContent = 'Çekiliyor… (biraz sürebilir)';
     try {
       const slug = artist.slug || undefined;
-      const r = await api('/api/spotify', { method: 'POST', body: { url: input.value, slug } });
+      const r = await call(() => backend.spotify(input.value, slug, (msg) => { btn.textContent = msg; }));
       if (!artist.name) artist.name = r.name;
       if (!artist.slug) artist.slug = slugify(r.name);
       if (!artist.image || confirm('Fotoğraf Spotify profil fotoğrafıyla değiştirilsin mi?')) artist.image = r.image;
@@ -265,7 +266,7 @@ function settingsPanel() {
     h('div', { class: 'f' }, h('label', {}, 'Mevcut şifre'), cur),
     h('div', { class: 'f' }, h('label', {}, 'Yeni şifre (en az 6 karakter)'), nxt),
     h('div', { class: 'f full' }, h('button', { class: 'btn primary', onclick: async () => {
-      try { await api('/api/password', { method: 'POST', body: { current: cur.value, next: nxt.value } }); toast('Şifre değişti, yeniden giriş yapın'); setTimeout(showLogin, 1200); }
+      try { await call(() => backend.password(cur.value, nxt.value)); toast('Şifre değişti, yeniden giriş yapın'); setTimeout(showLogin, 1200); }
       catch (err) { toast(err.message, true); }
     } }, 'Şifreyi güncelle')))));
 }
@@ -273,8 +274,10 @@ function settingsPanel() {
 /* ---------- çizim ---------- */
 
 function render() {
-  const t = TABS.find((x) => x.key === tab);
-  $('[data-tabs]').replaceChildren(...TABS.map((x) => h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
+  // GitHub modunda giriş token'la yapıldığı için şifre ayarı yok
+  const tabs = TABS.filter((x) => !(x.key === '_settings' && backend.mode === 'github'));
+  const t = tabs.find((x) => x.key === tab);
+  $('[data-tabs]').replaceChildren(...tabs.map((x) => h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
     x.label, Array.isArray(content[x.key]) && h('span', {}, content[x.key].length))));
   $('[data-tab-title]').textContent = t.label;
   $('[data-tab-hint]').textContent = t.hint;
@@ -298,20 +301,27 @@ async function save() {
   const clean = JSON.parse(JSON.stringify(content, (k, v) => (k.startsWith('_') ? undefined : v)));
   const btn = $('[data-save]');
   btn.disabled = true; btn.textContent = 'Kaydediliyor…';
-  try { await api('/api/content', { method: 'PUT', body: clean }); setDirty(false); toast('Kaydedildi — site güncellendi'); }
+  try { await call(() => backend.save(clean)); setDirty(false); toast(backend.savedMessage); }
   catch (err) { toast(err.message, true); btn.disabled = false; }
   finally { btn.textContent = 'Kaydet'; }
 }
 
 function showLogin() {
+  const gh = backend.mode === 'github';
+  const f = $('[data-login-form]');
+  $('[data-login-password]').hidden = gh;
+  $('[data-login-github]').hidden = !gh;
+  f.password.required = !gh;
+  f.token.required = gh;
+  if (gh && !f.owner.value) { const r = guessRepo(); f.owner.value = r.owner; f.repo.value = r.repo; f.branch.value = r.branch; }
   $('[data-app]').hidden = true;
   $('[data-login]').hidden = false;
 }
 
 async function boot() {
-  const { authed } = await api('/api/me');
-  if (!authed) return showLogin();
-  content = await (await fetch('/api/content', { cache: 'no-store' })).json();
+  if (!(await backend.me())) return showLogin();
+  try { content = await call(() => backend.load()); }
+  catch (err) { $('[data-login-err]').textContent = err.message; return showLogin(); }
   $('[data-login]').hidden = true;
   $('[data-app]').hidden = false;
   setDirty(false);
@@ -320,11 +330,19 @@ async function boot() {
 
 $('[data-login-form]').addEventListener('submit', async (e) => {
   e.preventDefault();
-  try { await api('/api/login', { method: 'POST', body: { password: e.target.password.value } }); e.target.reset(); $('[data-login-err]').textContent = ''; boot(); }
-  catch (err) { $('[data-login-err]').textContent = err.message; }
+  const f = e.target;
+  const btn = f.querySelector('button');
+  btn.disabled = true;
+  try {
+    await backend.login(backend.mode === 'github'
+      ? { token: f.token.value, owner: f.owner.value, repo: f.repo.value, branch: f.branch.value }
+      : { password: f.password.value });
+    f.reset(); $('[data-login-err]').textContent = ''; await boot();
+  } catch (err) { $('[data-login-err]').textContent = err.message; }
+  finally { btn.disabled = false; }
 });
 $('[data-save]').addEventListener('click', save);
-$('[data-logout]').addEventListener('click', async () => { await api('/api/logout'); showLogin(); });
+$('[data-logout]').addEventListener('click', async () => { await backend.logout(); showLogin(); });
 addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); if (dirty) save(); } });
 
 boot();

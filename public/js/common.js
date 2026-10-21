@@ -19,9 +19,14 @@ export const fmtTime = (s) => {
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 
 export async function loadContent() {
-  const r = await fetch('/api/content', { cache: 'no-store' });
-  if (!r.ok) throw new Error('İçerik yüklenemedi');
-  return r.json();
+  // kendi sunucumuzda API, GitHub Pages'te derleme sırasında kopyalanan content.json
+  for (const url of ['api/content', 'content.json']) {
+    try {
+      const r = await fetch(url, { cache: 'no-store' });
+      if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
+    } catch { /* sıradakini dene */ }
+  }
+  throw new Error('İçerik yüklenemedi');
 }
 
 export const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
@@ -111,11 +116,11 @@ export function renderFooter(site) {
   el.innerHTML = `
     <div class="footer-top">
       <div class="footer-brand">
-        <a class="brand" href="/"><img src="/assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
+        <a class="brand" href="./"><img src="assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
         <p>Eskişehir'de kayıt, prodüksiyon, mix & mastering ve klip stüdyosu.</p>
       </div>
       <nav class="footer-col"><h4 class="mono">Menü</h4>
-        <a href="/#hizmetler">Hizmetler</a><a href="/#studyo">Stüdyo</a><a href="/#sanatcilar">Sanatçılar</a><a href="/#klipler">Klipler</a><a href="/#iletisim">İletişim</a>
+        <a href="index.html#hizmetler">Hizmetler</a><a href="index.html#studyo">Stüdyo</a><a href="index.html#sanatcilar">Sanatçılar</a><a href="index.html#klipler">Klipler</a><a href="index.html#iletisim">İletişim</a>
       </nav>
       <div class="footer-col"><h4 class="mono">İletişim</h4>
         <a href="tel:${esc(String(site.phone || '').replace(/\s/g, ''))}">${esc(site.phone)}</a>

@@ -56,7 +56,7 @@ const rowB = gallery.slice(half).map((g, i) => shot(g, i + half));
 $('[data-gallery]').innerHTML = `<div class="studio-track">${[...rowA, ...rowA].join('')}</div><div class="studio-track">${[...rowB, ...rowB, ...rowB].join('')}</div>`;
 
 $('[data-artists]').innerHTML = artists.map((a, i) => `
-  <a class="sleeve reveal" href="/sanatci/${esc(a.slug)}" style="--accent:${esc(a.accent || '#ff8a1f')}">
+  <a class="sleeve reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || '#ff8a1f')}">
     <div class="sleeve-stage">
       <div class="vinyl"><img src="${esc(a.tracks?.[0]?.cover || a.image)}" alt=""></div>
       <div class="sleeve-cover">
@@ -77,7 +77,7 @@ relEl.innerHTML = releases.map((t, i) => `
   <li class="track reveal">
     <span class="track-i">${String(i + 1).padStart(2, '0')}</span>
     <img class="track-cover" src="${esc(t.cover || t.artistImage)}" alt="" loading="lazy">
-    <div><div class="track-title">${esc(t.title)}</div><a class="track-artist" href="/sanatci/${esc(t.slug)}">${esc(t.artists)}</a></div>
+    <div><div class="track-title">${esc(t.title)}</div><a class="track-artist" href="artist.html?id=${esc(t.slug)}">${esc(t.artists)}</a></div>
     <span class="track-dur">${fmtTime(t.duration)}</span>
     <span class="track-play">${icons.play}<span class="eq"><i></i><i></i><i></i></span></span>
   </li>`).join('');
@@ -135,7 +135,7 @@ initReveal();
 /* ---------- 3D sahne + scroll ---------- */
 let scene3d = null;
 try {
-  scene3d = await initHeroScene($('#scene'), { logoUrl: '/assets/pm-logo.png' });
+  scene3d = await initHeroScene($('#scene'), { logoUrl: 'assets/pm-logo.png' });
 } catch (err) {
   console.warn('WebGL başlatılamadı', err);
 }
