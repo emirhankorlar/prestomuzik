@@ -1,0 +1,358 @@
+{
+  "site": {
+    "name": "Presto Müzik",
+    "legalName": "Presto Müzik & Medya Co.",
+    "seoTitle": "Presto Müzik — Eskişehir Kayıt & Prodüksiyon Stüdyosu",
+    "seoDescription": "Eskişehir'de profesyonel vokal ve enstrüman kaydı, mix & mastering, beat prodüksiyon, klip ve dijital dağıtım. Presto Müzik & Medya Co.",
+    "heroKicker": "Eskişehir · Kayıt & Prodüksiyon Stüdyosu",
+    "heroTitle": "Sesin en hızlı hali.",
+    "heroCta": "Seans Ayırt",
+    "aboutTitle": "Notaların ötesinde bir anlatım.",
+    "about": [
+      "Presto Müzik, sanatçıların yaratıcılıklarını en üst düzeyde ifade edebilmeleri için platform sağlayan, Eskişehir'de kayıt, prodüksiyon ve müziğe dair çeşitli hizmetler veren bir müzik stüdyosudur.",
+      "Profesyonel kayıt odamız ve deneyimli prodüksiyon ekibimizle sanatçılarımızın vizyonuna sadık kalıp müziklerini hayata geçiriyoruz. Eserlerinizi geniş bir dinleyici kitlesiyle buluşturmak için pazarlama ve dağıtım stratejileri de geliştiriyoruz."
+    ],
+    "stats": [
+      {
+        "value": "10",
+        "label": "Hizmet"
+      },
+      {
+        "value": "7/24",
+        "label": "Fikir kabul"
+      },
+      {
+        "value": "1",
+        "label": "Akustik kabin"
+      },
+      {
+        "value": "∞",
+        "label": "Take"
+      }
+    ],
+    "marquee": [
+      "Vokal Kayıt",
+      "Mix & Mastering",
+      "Beat Prodüksiyon",
+      "Klip",
+      "Dijital Dağıtım",
+      "Podcast",
+      "Jingle",
+      "Seslendirme"
+    ],
+    "contactTitle": "Aynı notada buluşalım.",
+    "contactText": "Sorunuz mu var, bir işbirliği mi düşünüyorsunuz? Yazın, stüdyoyu birlikte gezelim.",
+    "phone": "+90 541 125 54 26",
+    "whatsapp": "905411255426",
+    "email": "info@prestomuzik.com",
+    "address": "Kırmızıtoprak Mah. Basın Şehitleri Cad. 84/B",
+    "city": "Odunpazarı / Eskişehir",
+    "mapQuery": "Presto Müzik ve Medya Co., Kırmızıtoprak, Basın Şehitleri Cd. 84/B, Odunpazarı, Eskişehir",
+    "mapLink": "https://share.google/qnLBIe2ZuLNMY1Yd6",
+    "instagram": "https://www.instagram.com/prestomuzik.co/",
+    "youtube": "https://www.youtube.com/c/prestomuzikarsiv",
+    "spotifyPlaylist": "https://open.spotify.com/playlist/6wpWqNqjAZi8gJAAfj1HZM"
+  },
+  "services": [
+    {
+      "title": "Vokal & Enstrüman Kayıt",
+      "text": "Akustik kabinde temiz kayıt."
+    },
+    {
+      "title": "Mix & Mastering",
+      "text": "Platformlara hazır, dengeli ses."
+    },
+    {
+      "title": "Beat Prodüksiyon",
+      "text": "Size özel altyapılar."
+    },
+    {
+      "title": "Seslendirme & Dublaj",
+      "text": "Reklam, belgesel, kurumsal."
+    },
+    {
+      "title": "Dijital Dağıtım",
+      "text": "Spotify, Apple Music ve tümü."
+    },
+    {
+      "title": "Ses Tasarımı",
+      "text": "Film, oyun ve içerik için."
+    },
+    {
+      "title": "Marka Jingle",
+      "text": "Akılda kalan marka melodisi."
+    },
+    {
+      "title": "Podcast Kayıt",
+      "text": "Kayıt, kurgu, yayına hazır."
+    },
+    {
+      "title": "Live Performans",
+      "text": "Stüdyoda canlı kayıt ve çekim."
+    },
+    {
+      "title": "Stüdyo Kiralama",
+      "text": "Oda, ekipman ve teknisyen hazır."
+    },
+    {
+      "title": "Klip & Görsel Prodüksiyon",
+      "text": "Klip, kurgu, sosyal medya."
+    }
+  ],
+  "gallery": [
+    {
+      "src": "assets/studio/3.webp",
+      "caption": "Kontrol odası"
+    },
+    {
+      "src": "assets/studio/7.webp",
+      "caption": "Vokal kabini"
+    },
+    {
+      "src": "assets/studio/5.webp",
+      "caption": "Monitörler"
+    },
+    {
+      "src": "assets/studio/1.webp",
+      "caption": "rec."
+    },
+    {
+      "src": "assets/studio/6.webp",
+      "caption": "Prodüksiyon"
+    },
+    {
+      "src": "assets/studio/10.webp",
+      "caption": "Akustik paneller"
+    },
+    {
+      "src": "assets/studio/4.webp",
+      "caption": "Kabin & cam"
+    },
+    {
+      "src": "assets/studio/2.webp",
+      "caption": "Ritim"
+    },
+    {
+      "src": "assets/studio/9.webp",
+      "caption": "Gece seansı"
+    },
+    {
+      "src": "assets/studio/8.webp",
+      "caption": "Mikrofon"
+    }
+  ],
+  "clips": [
+    {
+      "youtubeId": "OOz8CPBbu3A",
+      "title": "Burak Sarar — Kalsın"
+    },
+    {
+      "youtubeId": "a5fhPIrBj6g",
+      "title": "Pusula — Dalavere"
+    },
+    {
+      "youtubeId": "iI9hiWEnrxg",
+      "title": "Yalçın Özen — Yarınım Ol"
+    },
+    {
+      "youtubeId": "KYXnCrNOGTE",
+      "title": "Burak Sarar — Çıkış Yolu"
+    }
+  ],
+  "artists": [
+    {
+      "slug": "sky-g",
+      "name": "Sky G",
+      "realName": "Gökhan Ön",
+      "role": "Rap · Hip-Hop",
+      "tagline": "Sokaktan stüdyoya, içinde patlayan şarkılar.",
+      "bio": [
+        "Sky G, Presto Müzik çatısı altında üreten bir rap sanatçısı. Sert vuruşlu beat'ler üzerine doğrudan, filtresiz sözler yazıyor.",
+        "“Tecrübe” ve “BBB” ile başlayan yolculuğu, klibiyle yayınlanan “UmpaLumpa” ve “İçimde Patlayan Şarkılar” serisiyle devam ediyor. Tüm kayıt, mix ve mastering süreçleri Presto stüdyosunda."
+      ],
+      "accent": "#ff8a1f",
+      "image": "uploads/sky-g-spotify.jpg",
+      "socials": {
+        "instagram": "https://www.instagram.com/skyg.pm/",
+        "youtube": "https://www.youtube.com/@pmskyg",
+        "spotify": "https://open.spotify.com/artist/6eejbGj2FBMPGHwj1I2TO4"
+      },
+      "videos": [
+        {
+          "youtubeId": "5qfayogg5CE",
+          "title": "UmpaLumpa (Official Video)"
+        },
+        {
+          "youtubeId": "kSjQyxIQgtI",
+          "title": "İçimde Patlayan Şarkılar #2 — Umrumda Değil"
+        },
+        {
+          "youtubeId": "A2LPK6YeqMo",
+          "title": "İçimde Patlayan Şarkılar #1 — Kast"
+        },
+        {
+          "youtubeId": "Afy3SjkcY9c",
+          "title": "BBB (Official Lyric Video)"
+        },
+        {
+          "youtubeId": "GmX_IFXOpnI",
+          "title": "Tecrübe (Official Lyric Video)"
+        }
+      ],
+      "spotifyId": "6eejbGj2FBMPGHwj1I2TO4",
+      "tracks": [
+        {
+          "title": "Gelin Üzerime",
+          "artists": "Sky G",
+          "spotifyId": "0IoRM2x8MuIGByByVHiROM",
+          "duration": 214,
+          "preview": "uploads/sky-g-gelin-uzerime-preview.mp3",
+          "cover": "uploads/sky-g-gelin-uzerime-cover.jpg"
+        },
+        {
+          "title": "BBB",
+          "artists": "Sky G",
+          "spotifyId": "1G5RisVED2T3qweWV6ozb2",
+          "duration": 180,
+          "preview": "uploads/sky-g-bbb-preview.mp3",
+          "cover": "uploads/sky-g-bbb-cover.jpg"
+        },
+        {
+          "title": "Umpalumpa",
+          "artists": "Sky G",
+          "spotifyId": "2hxvphQ4JGC7iTfJdyFFfM",
+          "duration": 110,
+          "preview": "uploads/sky-g-umpalumpa-preview.mp3",
+          "cover": "uploads/sky-g-umpalumpa-cover.jpg"
+        },
+        {
+          "title": "Tecrübe",
+          "artists": "Sky G",
+          "spotifyId": "3jTklRCOwgiDW3M84z8hAw",
+          "duration": 168,
+          "preview": "uploads/sky-g-tecrube-preview.mp3",
+          "cover": "uploads/sky-g-tecrube-cover.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "burak-sarar",
+      "name": "Burak Sarar",
+      "realName": "",
+      "role": "Hip-Hop · Söz Yazarı",
+      "tagline": "Acılarım hep fevkalade.",
+      "bio": [
+        "Burak Sarar, hip-hop sanatçısı ve söz yazarı. Melodik nakaratları sert verse'lerle buluşturan, duygusu yüksek bir kalemi var.",
+        "“Çıkış Yolu”, “Denge” ve “Kalsın” ile tanınan Sarar; “Money Talks”, Sky G ile “Yok Sana Saygı” ve “GÜNAH” ile 2026'yı üretken geçiriyor."
+      ],
+      "accent": "#ff3b2f",
+      "image": "uploads/burak-sarar-spotify.jpg",
+      "socials": {
+        "instagram": "https://www.instagram.com/burak.sarar/",
+        "youtube": "https://www.youtube.com/@burak_sarar",
+        "spotify": "https://open.spotify.com/artist/0pqTcG4GJO5IeLBHNFA6hT"
+      },
+      "videos": [
+        {
+          "youtubeId": "S7r7btX4HvA",
+          "title": "GÜNAH"
+        },
+        {
+          "youtubeId": "PRvDUh9w_H0",
+          "title": "Money Talks"
+        },
+        {
+          "youtubeId": "OOz8CPBbu3A",
+          "title": "Kalsın (Official Video)"
+        },
+        {
+          "youtubeId": "KYXnCrNOGTE",
+          "title": "Çıkış Yolu (Official Video)"
+        }
+      ],
+      "spotifyId": "0pqTcG4GJO5IeLBHNFA6hT",
+      "tracks": [
+        {
+          "title": "GÜNAH",
+          "artists": "Burak Sarar",
+          "spotifyId": "6AwwxCdV1ornJ4rPyHYkIV",
+          "duration": 166,
+          "preview": "uploads/burak-sarar-gunah-preview.mp3",
+          "cover": "uploads/burak-sarar-gunah-cover.jpg"
+        },
+        {
+          "title": "Yok Sana Saygı",
+          "artists": "Burak Sarar, Sky G",
+          "spotifyId": "7u14DCSyHmZljUnEeSx8hR",
+          "duration": 100,
+          "preview": "uploads/burak-sarar-yok-sana-saygi-preview.mp3",
+          "cover": "uploads/burak-sarar-yok-sana-saygi-cover.jpg"
+        },
+        {
+          "title": "Money Talks",
+          "artists": "Burak Sarar",
+          "spotifyId": "1YiuXkJK4s0ptnCtx18pYo",
+          "duration": 109,
+          "preview": "uploads/burak-sarar-money-talks-preview.mp3",
+          "cover": "uploads/burak-sarar-money-talks-cover.jpg"
+        },
+        {
+          "title": "Yola Koyul",
+          "artists": "Burak Sarar",
+          "spotifyId": "25wuC4v98FYvd2PUTDNRTn",
+          "duration": 160,
+          "preview": "uploads/burak-sarar-yola-koyul-preview.mp3",
+          "cover": "uploads/burak-sarar-yola-koyul-cover.jpg"
+        },
+        {
+          "title": "Azımsananlar",
+          "artists": "Burak Sarar, Yaso",
+          "spotifyId": "58rnsukkDjBpB7r6OhocXH",
+          "duration": 227,
+          "preview": "uploads/burak-sarar-azimsananlar-preview.mp3",
+          "cover": "uploads/burak-sarar-azimsananlar-cover.jpg"
+        },
+        {
+          "title": "Denge",
+          "artists": "Burak Sarar",
+          "spotifyId": "1wlAe9ImPyxknJIruI85se",
+          "duration": 131,
+          "preview": "uploads/burak-sarar-denge-preview.mp3",
+          "cover": "uploads/burak-sarar-denge-cover.jpg"
+        },
+        {
+          "title": "Ay ve Güneş",
+          "artists": "Burak Sarar",
+          "spotifyId": "6WzQosC28eMR3UtW9K0UXB",
+          "duration": 175,
+          "preview": "uploads/burak-sarar-ay-ve-gunes-preview.mp3",
+          "cover": "uploads/burak-sarar-ay-ve-gunes-cover.jpg"
+        },
+        {
+          "title": "Alışamadım",
+          "artists": "Burak Sarar",
+          "spotifyId": "7MuGXthuz8aKDr8JNXgkwn",
+          "duration": 145,
+          "preview": "uploads/burak-sarar-alisamadim-preview.mp3",
+          "cover": "uploads/burak-sarar-alisamadim-cover.jpg"
+        },
+        {
+          "title": "Çıkış Yolu",
+          "artists": "Burak Sarar",
+          "spotifyId": "7HYX4TnbFsuGq2Eq55FBq3",
+          "duration": 240,
+          "preview": "uploads/burak-sarar-cikis-yolu-preview.mp3",
+          "cover": "uploads/burak-sarar-cikis-yolu-cover.jpg"
+        },
+        {
+          "title": "Ödün Ver",
+          "artists": "Burak Sarar",
+          "spotifyId": "5mjgdcmpC5F5WGlAybi9L7",
+          "duration": 147,
+          "preview": "uploads/burak-sarar-odun-ver-preview.mp3",
+          "cover": "uploads/burak-sarar-odun-ver-cover.jpg"
+        }
+      ]
+    }
+  ]
+}
