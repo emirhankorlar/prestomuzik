@@ -1,0 +1,12 @@
+{
+  "name": "presto-muzik",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Presto Müzik stüdyo web sitesi + yönetim paneli",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "seed": "node scripts/seed.js"
+  },
+  "engines": { "node": ">=18" }
+}

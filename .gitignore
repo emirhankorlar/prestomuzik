@@ -1,0 +1,6 @@
+# admin şifresi ve oturum anahtarı — sunucuda ilk açılışta otomatik oluşur, repoya girmemeli
+data/auth.json
+data/backups/
+*.tmp
+.DS_Store
+node_modules/

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sanatçı — Presto Müzik</title>
+  <meta name="description" content="Presto Müzik sanatçısı.">
+  <meta name="theme-color" content="#0b0907">
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/artist.css">
+  <script type="importmap">{ "imports": { "three": "/vendor/three.module.min.js" } }</script>
+</head>
+<body class="artist-page">
+  <canvas id="scene" aria-hidden="true"></canvas>
+
+  <header class="nav">
+    <a class="brand" href="/" aria-label="Presto Müzik ana sayfa"><img src="/assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
+    <div class="timecode mono"><span class="rec-dot"></span>REC <span data-timecode>00:00:00:00</span></div>
+    <nav class="nav-links">
+      <a href="/">Ana Sayfa</a>
+      <a href="/#sanatcilar">Sanatçılar</a>
+      <a href="#parcalar">Parçalar</a>
+      <a href="#videolar">Videolar</a>
+      <a class="btn" href="/#iletisim">Stüdyo</a>
+    </nav>
+    <button class="menu-btn" aria-label="Menü"><span></span><span></span></button>
+  </header>
+  <div class="mobile-menu">
+    <a class="display" href="/">Ana Sayfa</a>
+    <a class="display" href="/#sanatcilar">Sanatçılar</a>
+    <a class="display" href="#parcalar">Parçalar</a>
+    <a class="display" href="#videolar">Videolar</a>
+    <a class="display accent" href="/#iletisim">İletişim</a>
+  </div>
+
+  <main id="app">
+    <section class="a-hero">
+      <div class="a-hero-top mono">
+        <a href="/" class="a-back">← Ana sayfaya dön</a>
+        <span data-role></span>
+      </div>
+      <div class="a-hero-main">
+        <div class="mono accent" data-realname></div>
+        <h1 class="display a-name split" data-name></h1>
+        <p class="a-tagline serif" data-tagline></p>
+      </div>
+      <div class="now" data-now>
+        <button class="now-btn" data-now-toggle aria-label="Oynat / duraklat">
+          <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+        </button>
+        <div class="now-info">
+          <div class="mono mute">Şu an çalıyor · önizleme</div>
+          <div class="now-title" data-now-title>—</div>
+          <div class="now-bar"><i data-now-bar></i></div>
+        </div>
+        <div class="now-time mono" data-now-time>0:00</div>
+      </div>
+    </section>
+
+    <section class="section a-bio">
+      <div class="channel mono"><b>01</b> Hikâye</div>
+      <div class="a-bio-grid">
+        <div class="a-bio-text reveal" data-bio></div>
+        <div class="a-links reveal" data-links lang="en"></div>
+      </div>
+    </section>
+
+    <section class="section a-tracks" id="parcalar">
+      <div class="channel mono"><b>02</b> Parçalar</div>
+      <div class="tracks-wrap">
+        <div>
+          <h2 class="display split"><span class="split-line"><span>Popüler</span></span><span class="split-line"><span><span class="serif accent">parçalar</span></span></span></h2>
+          <p class="mute a-note reveal">Her parçanın 30 saniyelik önizlemesi burada. Tamamı için Spotify'da dinle.</p>
+        </div>
+        <ul class="tracklist" data-tracks></ul>
+      </div>
+      <div class="a-spotify reveal" data-spotify></div>
+    </section>
+
+    <section class="section a-videos" id="videolar">
+      <div class="channel mono"><b>03</b> Videolar</div>
+      <div class="clip-grid" data-videos></div>
+    </section>
+
+    <section class="section a-others">
+      <div class="channel mono"><b>04</b> Kadrodan diğerleri</div>
+      <div class="artist-grid" data-others></div>
+    </section>
+  </main>
+
+  <footer class="footer" data-footer></footer>
+
+  <script type="module" src="/js/artist.js"></script>
+</body>
+</html>

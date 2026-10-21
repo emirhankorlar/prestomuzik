@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Yönetim — Presto Müzik</title>
+  <link rel="icon" href="/assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,300..900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+  <div class="login" data-login hidden>
+    <form class="login-card" data-login-form>
+      <img src="/assets/pm-logo.webp" alt="">
+      <h1>Presto Yönetim</h1>
+      <label>Şifre<input type="password" name="password" autocomplete="current-password" autofocus required></label>
+      <button class="btn primary" type="submit">Giriş yap</button>
+      <p class="err" data-login-err></p>
+    </form>
+  </div>
+
+  <div class="app" data-app hidden>
+    <aside class="side">
+      <a class="side-brand" href="/" target="_blank"><img src="/assets/pm-logo.webp" alt=""><span>Presto<br><small>Yönetim paneli</small></span></a>
+      <nav class="tabs" data-tabs></nav>
+      <div class="side-foot">
+        <a class="btn ghost" href="/" target="_blank">Siteyi aç ↗</a>
+        <button class="btn ghost" data-logout>Çıkış</button>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="bar">
+        <div>
+          <h2 data-tab-title></h2>
+          <p class="hint" data-tab-hint></p>
+        </div>
+        <div class="bar-actions">
+          <span class="status" data-status></span>
+          <button class="btn primary" data-save disabled>Kaydet</button>
+        </div>
+      </header>
+      <div class="panel" data-panel></div>
+    </main>
+  </div>
+  <div class="toast" data-toast></div>
+  <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
