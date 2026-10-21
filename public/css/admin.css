@@ -36,14 +36,6 @@ input[type=color] { padding: 4px; height: 42px; width: 70px; cursor: pointer; }
 .login-card img { width: 44px; }
 .login-card h1 { margin: 0; font-stretch: 70%; font-weight: 800; text-transform: uppercase; font-size: 34px; line-height: 1; }
 .login-card label { display: grid; gap: 6px; color: var(--mute); font-size: 13px; }
-.gh-login { display: grid; gap: 14px; }
-.gh-note { margin: 0; font-size: 13px; color: var(--mute); line-height: 1.5; }
-.gh-note b { color: var(--ink); }
-.gh-repo { display: grid; grid-template-columns: 1fr 1fr 70px; gap: 8px; }
-.gh-help { font-size: 13px; color: var(--mute); }
-.gh-help summary { cursor: pointer; color: var(--accent); }
-.gh-help ol { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
-.gh-help code { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
 .login-card label { display: grid; gap: 6px; color: var(--mute); font-size: 13px; }
 .err { color: var(--red); margin: 0; min-height: 1.5em; font-size: 14px; }
 

@@ -1,5 +1,5 @@
 // Presto yönetim paneli — şemadan form üretir, içeriği tek JSON olarak kaydeder.
-import { createBackend, guessRepo } from './admin-backend.js';
+import { createBackend } from './admin-backend.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 const h = (tag, attrs = {}, ...kids) => {
@@ -49,9 +49,25 @@ function setDirty(v = true) {
 }
 addEventListener('beforeunload', (e) => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
 
-async function uploadFile(file) {
-  if (file.size > 24 * 1024 * 1024) throw new Error('Dosya 24MB\'dan büyük olamaz');
-  const data = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file); });
+const readDataUrl = (blob) => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(blob); });
+
+// büyük fotoğrafları yüklemeden önce küçült (sunucu tek istekte ~4MB kabul ediyor)
+async function shrinkImage(file) {
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type) || file.size < 1.2 * 1024 * 1024) return file;
+  const img = await createImageBitmap(file);
+  const scale = Math.min(1, 2000 / Math.max(img.width, img.height));
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.width * scale);
+  c.height = Math.round(img.height * scale);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  const blob = await new Promise((res) => c.toBlob(res, 'image/jpeg', 0.86));
+  return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+}
+
+async function uploadFile(original) {
+  const file = await shrinkImage(original);
+  if (file.size > 3 * 1024 * 1024) throw new Error('Dosya 3MB\'dan büyük olamaz (ses dosyasını kısaltın ya da sıkıştırın)');
+  const data = await readDataUrl(file);
   return call(() => backend.upload(file, data));
 }
 
@@ -274,8 +290,7 @@ function settingsPanel() {
 /* ---------- çizim ---------- */
 
 function render() {
-  // GitHub modunda giriş token'la yapıldığı için şifre ayarı yok
-  const tabs = TABS.filter((x) => !(x.key === '_settings' && backend.mode === 'github'));
+  const tabs = TABS;
   const t = tabs.find((x) => x.key === tab);
   $('[data-tabs]').replaceChildren(...tabs.map((x) => h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
     x.label, Array.isArray(content[x.key]) && h('span', {}, content[x.key].length))));
@@ -307,13 +322,6 @@ async function save() {
 }
 
 function showLogin() {
-  const gh = backend.mode === 'github';
-  const f = $('[data-login-form]');
-  $('[data-login-password]').hidden = gh;
-  $('[data-login-github]').hidden = !gh;
-  f.password.required = !gh;
-  f.token.required = gh;
-  if (gh && !f.owner.value) { const r = guessRepo(); f.owner.value = r.owner; f.repo.value = r.repo; f.branch.value = r.branch; }
   $('[data-app]').hidden = true;
   $('[data-login]').hidden = false;
 }
@@ -334,9 +342,7 @@ $('[data-login-form]').addEventListener('submit', async (e) => {
   const btn = f.querySelector('button');
   btn.disabled = true;
   try {
-    await backend.login(backend.mode === 'github'
-      ? { token: f.token.value, owner: f.owner.value, repo: f.repo.value, branch: f.branch.value }
-      : { password: f.password.value });
+    await backend.login({ password: f.password.value });
     f.reset(); $('[data-login-err]').textContent = ''; await boot();
   } catch (err) { $('[data-login-err]').textContent = err.message; }
   finally { btn.disabled = false; }

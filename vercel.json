@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
+  "functions": {
+    "api/spotify.js": { "maxDuration": 60 },
+    "api/upload.js": { "maxDuration": 30 }
+  },
+  "redirects": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/sanatci/:slug", "destination": "/artist.html?id=:slug", "permanent": true }
+  ]
+}

@@ -7,6 +7,7 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 const crypto = require('crypto');
+const spotify = require('./lib/spotify');
 
 const ROOT = __dirname;
 const PUBLIC = path.join(ROOT, 'public');
@@ -89,11 +90,7 @@ function readBody(req) {
   });
 }
 
-function slugify(s) {
-  const map = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', Ç: 'c', Ğ: 'g', İ: 'i', Ö: 'o', Ş: 's', Ü: 'u' };
-  return String(s || '').replace(/[çğıöşüÇĞİÖŞÜ]/g, (c) => map[c]).toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60) || 'dosya';
-}
+const { slugify } = spotify;
 
 async function writeContent(content) {
   await fsp.mkdir(BACKUPS, { recursive: true });
@@ -108,55 +105,13 @@ async function writeContent(content) {
   await fsp.rename(tmp, CONTENT);
 }
 
-async function download(url, base) {
-  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0' } });
-  if (!r.ok) throw new Error(`İndirilemedi: ${url}`);
-  const type = r.headers.get('content-type') || '';
-  const ext = type.includes('png') ? '.png' : type.includes('webp') ? '.webp' : type.includes('audio') ? '.mp3' : '.jpg';
-  const name = `${base}${ext}`;
+// Spotify içe aktarma: dosyalar public/uploads'a yazılır
+async function saveUpload(name, buffer) {
   await fsp.mkdir(UPLOADS, { recursive: true });
-  await fsp.writeFile(path.join(UPLOADS, name), Buffer.from(await r.arrayBuffer()));
+  await fsp.writeFile(path.join(UPLOADS, name), buffer);
   return `uploads/${name}`;
 }
-
-/* ---------- spotify import ---------- */
-// Spotify'ın herkese açık embed sayfasından sanatçı adı, fotoğraf ve popüler şarkılar (30 sn önizlemeleriyle) çekilir.
-
-async function importSpotifyArtist(input, { slug } = {}) {
-  const id = (/artist[/:]([A-Za-z0-9]{22})/.exec(input) || /^([A-Za-z0-9]{22})$/.exec(String(input).trim()) || [])[1];
-  if (!id) throw Object.assign(new Error('Geçerli bir Spotify sanatçı linki girin'), { status: 400 });
-  const html = await (await fetch(`https://open.spotify.com/embed/artist/${id}`, { headers: { 'User-Agent': 'Mozilla/5.0' } })).text();
-  const m = /<script id="__NEXT_DATA__" type="application\/json">(.*?)<\/script>/s.exec(html);
-  if (!m) throw new Error('Spotify sayfası okunamadı');
-  const entity = JSON.parse(m[1]).props.pageProps.state.data.entity;
-  const name = entity.name || entity.title;
-  const base = slug || slugify(name);
-  const images = (entity.visualIdentity && entity.visualIdentity.image) || [];
-  const biggest = images.slice().sort((a, b) => (b.maxWidth || 0) - (a.maxWidth || 0))[0];
-  const image = biggest ? await download(biggest.url, `${base}-spotify`).catch(() => biggest.url) : '';
-
-  const tracks = [];
-  for (const t of entity.trackList || []) {
-    const trackId = (t.uri || '').split(':').pop();
-    const track = {
-      title: t.title,
-      artists: t.subtitle || name,
-      spotifyId: trackId,
-      duration: Math.round((t.duration || 0) / 1000),
-      preview: '',
-      cover: '',
-    };
-    if (t.audioPreview && t.audioPreview.url) {
-      track.preview = await download(t.audioPreview.url, `${base}-${slugify(t.title)}-preview`).catch(() => t.audioPreview.url);
-    }
-    try {
-      const o = await (await fetch(`https://open.spotify.com/oembed?url=https://open.spotify.com/track/${trackId}`)).json();
-      if (o.thumbnail_url) track.cover = await download(o.thumbnail_url, `${base}-${slugify(t.title)}-cover`).catch(() => o.thumbnail_url);
-    } catch { /* kapak yoksa sanatçı fotoğrafı kullanılır */ }
-    tracks.push(track);
-  }
-  return { name, spotifyId: id, image, tracks };
-}
+const importSpotifyArtist = (input, { slug } = {}) => spotify.importSpotifyArtist(input, { slug, save: saveUpload });
 
 /* ---------- api ---------- */
 

@@ -8,5 +8,10 @@
     "start": "node server.js",
     "seed": "node scripts/seed.js"
   },
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.8.2"
+  }
 }

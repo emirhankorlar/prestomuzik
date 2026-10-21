@@ -23,20 +23,18 @@ Node 18 veya üzeri gerekir.
 - **Hizmetler**, **Stüdyo galerisi**, **Klipler**
 - Her kayıtta eski içerik `data/backups/` klasörüne yedeklenir (son 30 kayıt).
 
-## GitHub Pages ile yayın (sunucusuz)
+## Vercel ile yayın (önerilen)
 
-`main` dalına her push'ta `.github/workflows/pages.yml` siteyi Pages'e yayınlar
-(repo ayarlarında **Settings → Pages → Source: GitHub Actions** seçili olmalı).
+Repo Vercel'e bağlı; `main`'e her push otomatik yayınlanır. `vercel.json` statik siteyi `public/` klasöründen,
+admin işlemlerini `api/` fonksiyonlarından sunar. İçerik ve yüklenen dosyalar **Vercel Blob**'da saklanır.
 
-- Site: `https://<kullanıcı>.github.io/<repo>/`
-- Admin: `https://<kullanıcı>.github.io/<repo>/admin.html` — giriş şifreyle değil, **GitHub token** ile yapılır.
-  Token hiçbir yere kaydedilmez, sadece o sekmede tutulur.
-  - GitHub → Settings → Developer settings → **Fine-grained tokens** → Generate new token
-  - Repository access: sadece bu repo
-  - Permissions: **Contents: Read and write**, **Actions: Read and write**
-- Kaydet'e basınca `data/content.json` repoya commit edilir, site ~1 dakikada güncellenir.
-- Yüklenen görseller/sesler `public/uploads/` klasörüne commit edilir.
-- "Spotify'dan çek" butonu `.github/workflows/spotify-import.yml` işini tetikler (~1 dk sürer).
+Bir kerelik kurulum (Vercel panelinde, proje içinde):
+1. **Storage → Create → Blob** → projeye bağla (`BLOB_READ_WRITE_TOKEN` otomatik eklenir)
+2. **Settings → Environment Variables → `ADMIN_PASSWORD`** = admin şifresi
+3. **Deployments → Redeploy**
+
+Admin: `https://<proje>.vercel.app/admin`. Şifre değiştirmek için `ADMIN_PASSWORD`'ü güncelleyip yeniden yayınla.
+Blob bağlanmadan da site açılır (repodaki `data/content.json` gösterilir), sadece kaydetme çalışmaz.
 
 ## Kendi sunucunda yayın
 

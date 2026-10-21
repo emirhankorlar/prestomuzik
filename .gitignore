@@ -4,3 +4,4 @@ data/backups/
 *.tmp
 .DS_Store
 node_modules/
+data/imports/

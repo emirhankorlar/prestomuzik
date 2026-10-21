@@ -16,24 +16,7 @@
     <form class="login-card" data-login-form>
       <img src="assets/pm-logo.webp" alt="">
       <h1>Presto Yönetim</h1>
-      <label data-login-password>Şifre<input type="password" name="password" autocomplete="current-password" autofocus></label>
-      <div class="gh-login" data-login-github hidden>
-        <p class="gh-note">Bu panel GitHub üzerinden çalışıyor. Giriş için repoya yazma izni olan bir <b>GitHub token</b> girin. Token hiçbir yere kaydedilmez, sekmeyi kapatınca silinir.</p>
-        <label>GitHub token<input type="password" name="token" autocomplete="off" spellcheck="false" placeholder="github_pat_…"></label>
-        <div class="gh-repo">
-          <label>Kullanıcı<input name="owner" spellcheck="false"></label>
-          <label>Repo<input name="repo" spellcheck="false"></label>
-          <label>Dal<input name="branch" spellcheck="false" value="main"></label>
-        </div>
-        <details class="gh-help"><summary>Token nasıl alınır?</summary>
-          <ol>
-            <li>GitHub → Settings → Developer settings → <b>Fine-grained tokens</b> → Generate new token</li>
-            <li>Repository access: <b>Only select repositories</b> → bu repo</li>
-            <li>Permissions: <b>Contents: Read and write</b>, <b>Actions: Read and write</b></li>
-            <li>Oluşan <code>github_pat_…</code> değerini buraya yapıştırın</li>
-          </ol>
-        </details>
-      </div>
+      <label>Şifre<input type="password" name="password" autocomplete="current-password" autofocus required></label>
       <button class="btn primary" type="submit">Giriş yap</button>
       <p class="err" data-login-err></p>
     </form>

@@ -1,0 +1,8 @@
+data/auth.json
+data/backups
+data/imports
+.github
+node_modules
+server.js
+scripts
+README.md
