@@ -20,22 +20,10 @@
   <header class="nav">
     <a class="brand" href="./" aria-label="Presto Müzik ana sayfa"><img src="assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
     <div class="timecode mono"><span class="rec-dot"></span>REC <span data-timecode>00:00:00:00</span></div>
-    <nav class="nav-links">
-      <a href="./">Ana Sayfa</a>
-      <a href="index.html#sanatcilar">Sanatçılar</a>
-      <a href="#parcalar">Parçalar</a>
-      <a href="#videolar">Videolar</a>
-      <a class="btn" href="index.html#iletisim">Stüdyo</a>
-    </nav>
+    <nav class="nav-links"></nav>
     <button class="menu-btn" aria-label="Menü"><span></span><span></span></button>
   </header>
-  <div class="mobile-menu">
-    <a class="display" href="./">Ana Sayfa</a>
-    <a class="display" href="index.html#sanatcilar">Sanatçılar</a>
-    <a class="display" href="#parcalar">Parçalar</a>
-    <a class="display" href="#videolar">Videolar</a>
-    <a class="display accent" href="index.html#iletisim">İletişim</a>
-  </div>
+  <div class="mobile-menu"></div>
 
   <main id="app">
     <section class="a-hero">
@@ -59,6 +47,7 @@
           <div class="now-bar"><i data-now-bar></i></div>
         </div>
         <div class="now-time mono" data-now-time>0:00</div>
+        <a class="now-link mono" data-now-link target="_blank" rel="noopener" hidden></a>
       </div>
     </section>
 
@@ -74,17 +63,17 @@
       <div class="channel mono"><b>02</b> Parçalar</div>
       <div class="tracks-wrap">
         <div>
-          <h2 class="display split"><span class="split-line"><span>Popüler</span></span><span class="split-line"><span><span class="serif accent">parçalar</span></span></span></h2>
-          <p class="mute a-note reveal">Her parçanın 30 saniyelik önizlemesi burada. Tamamı için Spotify'da dinle.</p>
+          <h2 class="display split" data-tracks-title></h2>
+          <p class="mute a-note reveal">Her parçanın 30 saniyelik önizlemesi burada. Tamamı için <a class="accent" data-profile target="_blank" rel="noopener">Spotify'da dinle ↗</a></p>
         </div>
         <ul class="tracklist" data-tracks></ul>
       </div>
-      <div class="a-spotify reveal" data-spotify></div>
     </section>
 
     <section class="section a-videos" id="videolar">
       <div class="channel mono"><b>03</b> Videolar</div>
       <div class="clip-grid" data-videos></div>
+      <button class="btn btn--ghost more-btn" data-more hidden>Daha fazlasını gör</button>
     </section>
 
     <section class="section a-others">

@@ -30,29 +30,15 @@
   <header class="nav">
     <a class="brand" href="./" aria-label="Presto Müzik ana sayfa"><img src="assets/pm-logo.webp" alt=""><span>Presto Müzik</span></a>
     <div class="timecode mono"><span class="rec-dot"></span>REC <span data-timecode>00:00:00:00</span></div>
-    <nav class="nav-links">
-      <a href="#studyo">Stüdyo</a>
-      <a href="#hizmetler">Hizmetler</a>
-      <a href="#sanatcilar">Sanatçılar</a>
-      <a href="#klipler">Klipler</a>
-      <a class="btn" href="#iletisim">Seans Ayırt</a>
-    </nav>
+    <nav class="nav-links"></nav>
     <button class="menu-btn" aria-label="Menü"><span></span><span></span></button>
   </header>
-  <div class="mobile-menu">
-    <a class="display" href="#hizmetler">Hizmetler</a>
-    <a class="display" href="#studyo">Stüdyo</a>
-    <a class="display" href="#sanatcilar">Sanatçılar</a>
-    <a class="display" href="#klipler">Klipler</a>
-    <a class="display accent" href="#iletisim">İletişim</a>
-    <div class="mono" data-menu-contact></div>
-  </div>
+  <div class="mobile-menu"></div>
 
   <main id="app">
-    <section class="hero" data-scene="0">
+    <section class="hero" data-scene="0" data-fade="1">
       <div class="hero-top">
         <div class="mono" data-kicker>Eskişehir · Kayıt & Prodüksiyon Stüdyosu</div>
-        <div class="mono">39.77° N · 30.52° E</div>
       </div>
       <h1 class="display hero-title split" data-hero-title><span class="split-line"><span>Sesin en hızlı</span></span><span class="split-line"><span><span class="serif">hali.</span></span></span></h1>
       <div class="hero-bottom">
@@ -66,65 +52,67 @@
 
     <div class="marquee"><div class="marquee-track display" data-marquee></div></div>
 
-    <section class="section about" id="hakkimizda" data-scene="1">
-      <div class="channel mono"><b>CH-01</b> Hakkımızda <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section about" id="hakkimizda" data-section="about">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="about-grid">
-        <h2 class="display about-title split" data-about-title></h2>
+        <h2 class="display about-title split" data-title></h2>
         <div class="about-copy reveal" data-about></div>
       </div>
       <div class="stats" data-stats></div>
     </section>
 
-    <section class="section services" id="hizmetler" data-scene="1" data-fade="0.45">
-      <div class="channel mono"><b>CH-02</b> Neler yapıyoruz <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section services" id="hizmetler" data-section="services">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="services-head">
-        <h2 class="display split"><span class="split-line"><span>Hizmet</span></span><span class="split-line"><span><span class="serif accent">listesi</span></span></span></h2>
-        <p class="reveal">Fikirden yayına tek çatı altında: kayıt, prodüksiyon, mix & mastering, görsel ve dağıtım.</p>
+        <h2 class="display split" data-title></h2>
+        <p class="reveal" data-text></p>
       </div>
       <ul class="svc-list" data-services></ul>
       <div class="svc-preview"><img alt=""></div>
     </section>
 
-    <section class="section studio" id="studyo" data-scene="1" data-fade="0.3">
-      <div class="channel mono"><b>CH-03</b> Stüdyo <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section studio" id="studyo" data-section="studio">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="studio-head">
-        <h2 class="display split"><span class="split-line"><span>İçeriden</span></span><span class="split-line"><span><span class="serif accent">bir tur</span></span></span></h2>
-        <a class="btn btn--ghost" href="#iletisim">Stüdyoyu gezmeye gel</a>
+        <h2 class="display split" data-title></h2>
+        <a class="btn btn--ghost" href="#iletisim" data-text></a>
       </div>
       <div class="studio-rows" data-gallery></div>
     </section>
 
-    <section class="section artists" id="sanatcilar" data-scene="2" data-fade="0.6">
-      <div class="channel mono"><b>CH-04</b> Sanatçılar <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section artists" id="sanatcilar" data-section="artists">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="artists-head">
-        <h2 class="display split"><span class="split-line"><span>Presto</span></span><span class="split-line"><span><span class="serif accent">kadrosu</span></span></span></h2>
-        <p class="reveal">Stüdyomuzda üreten, Presto çatısı altında yayınlanan sanatçılar. Plağı çek, dinlemeye başla.</p>
+        <h2 class="display split" data-title></h2>
+        <p class="reveal" data-text></p>
       </div>
+      <div class="team-tabs reveal" data-team-tabs role="tablist"></div>
       <div class="artist-grid" data-artists></div>
+      <div class="team-grid" data-team hidden></div>
     </section>
 
-    <section class="section tracks" id="dinle" data-scene="2" data-fade="0.5">
-      <div class="channel mono"><b>CH-05</b> Stüdyodan çıkanlar <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section tracks" id="dinle" data-section="tracks">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="tracks-wrap">
-        <h2 class="display split"><span class="split-line"><span>Son</span></span><span class="split-line"><span>çıkanlar</span></span><span class="split-line"><span><span class="serif accent">— dinle.</span></span></span></h2>
+        <h2 class="display split" data-title></h2>
         <ul class="tracklist" data-releases></ul>
       </div>
     </section>
 
-    <section class="section clips" id="klipler" data-scene="2" data-fade="0.35">
-      <div class="channel mono"><b>CH-06</b> Presto Medya <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section clips" id="klipler" data-section="clips">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="clips-head">
-        <h2 class="display split"><span class="split-line"><span>Çektiğimiz</span></span><span class="split-line"><span><span class="serif accent">klipler</span></span></span></h2>
-        <a class="btn btn--ghost" data-youtube target="_blank" rel="noopener">YouTube'da izle</a>
+        <h2 class="display split" data-title></h2>
+        <a class="btn btn--ghost" data-youtube data-text target="_blank" rel="noopener"></a>
       </div>
       <div class="clip-grid" data-clips></div>
     </section>
 
-    <section class="section contact" id="iletisim" data-scene="1" data-fade="0.5">
-      <div class="channel mono"><b>CH-07</b> İletişim <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
+    <section class="section contact" id="iletisim" data-section="contact">
+      <div class="channel mono"><b data-ch></b> <span data-label></span> <span class="meter" data-meter><i></i><i></i><i></i><i></i></span></div>
       <div class="contact-grid">
         <div>
-          <h2 class="display split" data-contact-title></h2>
+          <h2 class="display split" data-title></h2>
           <p class="contact-lead reveal" data-contact-text></p>
           <div class="contact-list reveal" data-contact></div>
         </div>
@@ -139,11 +127,12 @@
             <select id="f-service" name="service" data-service-select></select>
           </div>
           <div class="field"><label class="mono" for="f-msg">Mesaj</label><textarea id="f-msg" name="message" placeholder="Projeni kısaca anlat: tür, referans, tarih…"></textarea></div>
+          <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
           <div class="form-row">
             <button class="btn" type="submit" data-via="wa">WhatsApp ile gönder</button>
             <button class="btn btn--ghost" type="submit" data-via="mail">E-posta ile gönder</button>
           </div>
-          <p class="form-note">Mesajın WhatsApp ya da e-posta uygulamanda hazır açılır, sadece gönder'e bas.</p>
+          <p class="form-note" data-form-note>Mesajın bize iletilir; WhatsApp ya da e-posta uygulamanda da hazır açılır.</p>
         </form>
       </div>
       <div class="map reveal" data-map></div>

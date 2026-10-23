@@ -8,6 +8,7 @@ const fsp = fs.promises;
 const path = require('path');
 const crypto = require('crypto');
 const spotify = require('./lib/spotify');
+const { cleanMessage } = require('./lib/messages');
 
 const ROOT = __dirname;
 const PUBLIC = path.join(ROOT, 'public');
@@ -16,6 +17,7 @@ const DATA = path.join(ROOT, 'data');
 const CONTENT = path.join(DATA, 'content.json');
 const AUTH = path.join(DATA, 'auth.json');
 const BACKUPS = path.join(DATA, 'backups');
+const MESSAGES = path.join(DATA, 'messages');
 const PORT = Number(process.env.PORT) || 3000;
 const MAX_BODY = 25 * 1024 * 1024;
 
@@ -137,6 +139,17 @@ async function api(req, res, pathname) {
 
   if (pathname === '/api/me') return send(res, 200, { authed: isAuthed(req) });
 
+  // iletişim formu: ziyaretçi gönderir, panel okur / siler
+  if (pathname === '/api/messages' && req.method === 'POST') {
+    const { msg, error, spam } = cleanMessage(await readBody(req));
+    if (error) return send(res, 400, { error });
+    if (!spam) {
+      await fsp.mkdir(MESSAGES, { recursive: true });
+      await fsp.writeFile(path.join(MESSAGES, `${Date.now()}-${crypto.randomBytes(3).toString('hex')}.json`), JSON.stringify(msg));
+    }
+    return send(res, 200, { ok: true });
+  }
+
   if (!isAuthed(req)) return send(res, 401, { error: 'Oturum gerekli' });
 
   if (pathname === '/api/content' && req.method === 'PUT') {
@@ -145,6 +158,19 @@ async function api(req, res, pathname) {
       return send(res, 400, { error: 'İçerik formatı bozuk' });
     }
     await writeContent(body);
+    return send(res, 200, { ok: true });
+  }
+
+  if (pathname === '/api/messages' && req.method === 'GET') {
+    const files = (await fsp.readdir(MESSAGES).catch(() => [])).filter((f) => f.endsWith('.json'));
+    const msgs = await Promise.all(files.map(async (f) => ({ ...JSON.parse(await fsp.readFile(path.join(MESSAGES, f), 'utf8')), id: f })));
+    return send(res, 200, msgs.sort((a, b) => String(b.date).localeCompare(String(a.date))));
+  }
+
+  if (pathname === '/api/messages' && req.method === 'DELETE') {
+    const { id } = await readBody(req);
+    if (!/^[\w-]+\.json$/.test(String(id))) return send(res, 400, { error: 'Geçersiz mesaj' });
+    await fsp.unlink(path.join(MESSAGES, id)).catch(() => {});
     return send(res, 200, { ok: true });
   }
 

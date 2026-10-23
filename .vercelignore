@@ -6,3 +6,4 @@ node_modules
 server.js
 scripts
 README.md
+data/messages

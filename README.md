@@ -18,9 +18,12 @@ Node 18 veya üzeri gerekir.
 
 ## Panelden neler değişir
 
-- **Sanatçılar:** ekle, sil, sırala. Spotify sanatçı linkini yapıştırıp **Spotify'dan çek**'e basınca popüler parçalar, kapaklar, 30 sn önizlemeler ve profil fotoğrafı otomatik iner. Biyografi, renk, fotoğraf, sosyal linkler ve YouTube videoları elle düzenlenir.
+- **Sanatçılar:** ekle, sil, sırala. Katalog no (PM-001), parçalar başlığı, TikTok/SoundCloud, parçaya özel "tamamını dinle" linki. Spotify sanatçı linkini yapıştırıp **Spotify'dan çek**'e basınca popüler parçalar, kapaklar, 30 sn önizlemeler ve profil fotoğrafı otomatik iner. Biyografi, renk, fotoğraf, sosyal linkler ve YouTube videoları elle düzenlenir.
+- **Kadro:** prodüktör, yönetmen vb. ekip üyeleri ve kategorileri (ana sayfada sekmeli).
+- **Ana sayfa düzeni:** bölüm sırası (menü aynı sırayı izler), menüde göster, kanal kodları (CH-01), başlıklar, arka plan efekti ve solukluğu, ekstra menü linkleri, site/logo renkleri, logo boyutu.
 - **Genel metinler:** giriş başlığı, hakkımızda yazısı, rakamlar, iletişim, adres, SEO.
-- **Hizmetler**, **Stüdyo galerisi**, **Klipler**
+- **Mesajlar:** iletişim formundan gelen her gönderim (yerelde `data/messages/`, Vercel'de Blob `messages/`).
+- **Hizmetler** (her hizmete fotoğraf), **Stüdyo galerisi**, **Klipler**
 - Her kayıtta eski içerik `data/backups/` klasörüne yedeklenir (son 30 kayıt).
 
 ## Vercel ile yayın (önerilen)
@@ -29,7 +32,7 @@ Repo Vercel'e bağlı; `main`'e her push otomatik yayınlanır. `vercel.json` st
 admin işlemlerini `api/` fonksiyonlarından sunar. İçerik ve yüklenen dosyalar **Vercel Blob**'da saklanır.
 
 Bir kerelik kurulum (Vercel panelinde, proje içinde):
-1. **Storage → Create → Blob** → projeye bağla (`BLOB_READ_WRITE_TOKEN` otomatik eklenir)
+1. **Storage → Create → Blob** (erişim: **Public**) → projeye bağla (`BLOB_STORE_ID` ya da `BLOB_READ_WRITE_TOKEN` otomatik eklenir)
 2. **Settings → Environment Variables → `ADMIN_PASSWORD`** = admin şifresi
 3. **Deployments → Redeploy**
 

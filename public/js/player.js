@@ -96,6 +96,7 @@ export function mountMiniPlayer() {
       <div class="mini-bar"><i></i></div>
     </div>
     <div class="mini-ctrl">
+      <a class="mini-link" target="_blank" rel="noopener" aria-label="Tamamını dinle" hidden>${icons.arrowUpRight}</a>
       <button class="mini-toggle" aria-label="Oynat / duraklat">${icons.play}${icons.pause}</button>
       <button class="mini-next" aria-label="Sonraki">${icons.next}</button>
     </div>`;
@@ -115,6 +116,12 @@ export function mountMiniPlayer() {
     el.querySelector('img').src = track.cover || track.artistImage || '';
     el.querySelector('.mini-title').innerHTML = `${esc(track.title)} <span class="mono" style="color:var(--accent);font-size:9px">· önizleme</span>`;
     el.querySelector('.mini-artist').textContent = track.artists || '';
+    // önizlemeden tam şarkıya: parçaya özel link, yoksa sanatçının Spotify profili
+    const link = el.querySelector('.mini-link');
+    const href = track.link || track.profile;
+    link.hidden = !href;
+    if (href) { link.href = href; link.title = /spotify\.com/.test(href) ? "Spotify'da dinle" : 'Tamamını dinle'; }
+    document.body.classList.add('has-mini');
   });
   return el;
 }
@@ -126,7 +133,8 @@ export function bindTrackList(listEl, tracks) {
       if (e.target.closest('a')) return;
       const t = tracks[i];
       if (!t.preview) {
-        if (t.spotifyId) open(`https://open.spotify.com/track/${t.spotifyId}`, '_blank', 'noopener');
+        const href = t.link || (t.spotifyId ? `https://open.spotify.com/track/${t.spotifyId}` : t.profile);
+        if (href) open(href, '_blank', 'noopener');
         return;
       }
       if (player.isCurrent(t)) return player.toggle();

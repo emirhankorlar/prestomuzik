@@ -1,4 +1,5 @@
 // Ortak yardımcılar: içerik yükleme, nav, imleç, reveal animasyonları.
+import { withDefaults, sectionAnchor } from './defaults.js';
 
 export const icons = {
   play: '<svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>',
@@ -7,6 +8,18 @@ export const icons = {
   arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
   arrowUpRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" width="16" height="16"><path d="M7 17L17 7M8 7h9v9"/></svg>',
   wa: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.5-.3z"/></svg>',
+};
+
+// sanatçı / kadro sosyal bağlantıları: anahtar, görünen ad, eylem
+export const SOCIALS = [['spotify', 'Spotify', 'Dinle'], ['youtube', 'YouTube', 'İzle'], ['instagram', 'Instagram', 'Takip et'], ['tiktok', 'TikTok', 'Takip et'], ['soundcloud', 'SoundCloud', 'Dinle']];
+
+// başlığın son kelimesi italik serif vurgu olur, kalan kelimeler iki satıra bölünür
+export const accentTitle = (t) => {
+  const words = String(t || '').trim().split(/\s+/);
+  const last = words.pop();
+  if (!words.length) return splitLines(`<span class="serif">${esc(last)}</span>`);
+  const half = Math.ceil(words.length / 2);
+  return splitLines(`${esc(words.slice(0, half).join(' '))}|${esc(words.slice(half).join(' '))} <span class="serif">${esc(last)}</span>`);
 };
 
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -23,10 +36,68 @@ export async function loadContent() {
   for (const url of ['api/content', 'content.json']) {
     try {
       const r = await fetch(url, { cache: 'no-store' });
-      if (r.ok && (r.headers.get('content-type') || '').includes('json')) return await r.json();
+      if (r.ok && (r.headers.get('content-type') || '').includes('json')) return withDefaults(await r.json());
     } catch { /* sıradakini dene */ }
   }
   throw new Error('İçerik yüklenemedi');
+}
+
+// panelde seçilen site renkleri
+export function applyColors(site) {
+  const { accent, accent2 } = site.colors;
+  const root = document.documentElement.style;
+  root.setProperty('--amber', accent);
+  root.setProperty('--red', accent2);
+}
+
+// menü = ana sayfadaki bölüm sırası (menüde göster işaretli olanlar) + ekstra linkler
+export function menuItems(site, prefix = '') {
+  const items = site.sections.filter((s) => s.visible && s.menu).map((s) => ({ name: s.menuName, href: `${prefix}#${sectionAnchor(s.id)}` }));
+  for (const l of site.menuLinks) if (l.name && l.url) items.push({ name: l.name, href: l.url, external: /^https?:/.test(l.url) });
+  return items;
+}
+const linkAttrs = (it) => `href="${esc(it.href)}"${it.external ? ' target="_blank" rel="noopener"' : ''}`;
+
+export function renderMenu(site, { prefix = '', extra = [] } = {}) {
+  const items = [...extra, ...menuItems(site, prefix)];
+  const nav = document.querySelector('.nav-links');
+  if (nav) nav.innerHTML = items.map((it) => `<a ${linkAttrs(it)}>${esc(it.name)}</a>`).join('')
+    + `<a class="btn" href="${prefix}#iletisim">${esc(site.heroCta || 'Seans Ayırt')}</a>`;
+  const mob = document.querySelector('.mobile-menu');
+  if (mob) mob.innerHTML = items.map((it) => `<a class="display" ${linkAttrs(it)}>${esc(it.name)}</a>`).join('')
+    + `<a class="display accent" href="${prefix}#iletisim">İletişim</a><div class="mono" lang="en">${esc(site.phone)}<br>${esc(site.email)}</div>`;
+}
+
+// sağ altta sabit WhatsApp butonu
+export function mountWhatsApp(site) {
+  if (!site.whatsapp) return;
+  const a = document.createElement('a');
+  a.className = 'wa-float';
+  a.href = `https://wa.me/${site.whatsapp}`;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  a.setAttribute('aria-label', 'WhatsApp ile yaz');
+  a.innerHTML = icons.wa;
+  document.body.append(a);
+  // girişteki butonların üstüne binmesin: biraz aşağı inince belirir
+  const onScroll = () => a.classList.toggle('is-on', scrollY > innerHeight * 0.4);
+  addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+// ızgarada ilk iki satır görünür, fazlası "Daha fazlasını gör" ile açılır
+export function clampRows(grid, btn, rows = 2) {
+  let expanded = false;
+  const apply = () => {
+    const items = [...grid.children];
+    const cols = getComputedStyle(grid).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+    const max = cols * rows;
+    items.forEach((el, i) => { el.hidden = !expanded && i >= max; });
+    btn.hidden = expanded || items.length <= max;
+  };
+  btn.addEventListener('click', () => { expanded = true; apply(); });
+  addEventListener('resize', apply);
+  apply();
 }
 
 export const isTouch = matchMedia('(hover: none), (pointer: coarse)').matches;
@@ -41,7 +112,7 @@ export function initNav() {
 
   const btn = document.querySelector('.menu-btn');
   btn?.addEventListener('click', () => document.body.classList.toggle('menu-open'));
-  document.querySelectorAll('.mobile-menu a').forEach((a) => a.addEventListener('click', () => document.body.classList.remove('menu-open')));
+  document.querySelector('.mobile-menu')?.addEventListener('click', (e) => { if (e.target.closest('a')) document.body.classList.remove('menu-open'); });
 
   // DAW tarzı zaman kodu: sayfada geçen süre (SS:DD:SN:KARE)
   const tc = document.querySelector('[data-timecode]');
@@ -120,7 +191,7 @@ export function renderFooter(site) {
         <p>Eskişehir'de kayıt, prodüksiyon, mix & mastering ve klip stüdyosu.</p>
       </div>
       <nav class="footer-col"><h4 class="mono">Menü</h4>
-        <a href="index.html#hizmetler">Hizmetler</a><a href="index.html#studyo">Stüdyo</a><a href="index.html#sanatcilar">Sanatçılar</a><a href="index.html#klipler">Klipler</a><a href="index.html#iletisim">İletişim</a>
+        ${menuItems(site, 'index.html').map((it) => `<a ${linkAttrs(it)}>${esc(it.name)}</a>`).join('')}<a href="index.html#iletisim">İletişim</a>
       </nav>
       <div class="footer-col"><h4 class="mono">İletişim</h4>
         <a href="tel:${esc(String(site.phone || '').replace(/\s/g, ''))}">${esc(site.phone)}</a>

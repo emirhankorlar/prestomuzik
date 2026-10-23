@@ -20,6 +20,8 @@ function serverBackend() {
     save: (content) => api('api/content', { method: 'PUT', body: content }),
     async upload(file, dataUrl) { return (await api('api/upload', { method: 'POST', body: { name: file.name, data: dataUrl } })).url; },
     spotify: (url, slug) => api('api/spotify', { method: 'POST', body: { url, slug } }),
+    messages: () => api('api/messages'),
+    deleteMessage: (id) => api('api/messages', { method: 'DELETE', body: { id } }),
     password: (current, next) => api('api/password', { method: 'POST', body: { current, next } }),
     preview: (u) => u,
     savedMessage: 'Kaydedildi — site güncellendi',

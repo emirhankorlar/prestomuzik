@@ -1,15 +1,38 @@
-import { loadContent, initNav, initReveal, initBackdrop, renderFooter, hideLoader, setMeta, esc, icons, fmtTime, ytThumb, splitLines, isTouch } from './common.js';
+import { loadContent, initNav, initReveal, initBackdrop, renderFooter, hideLoader, setMeta, esc, icons, fmtTime, ytThumb, splitLines, isTouch, applyColors, renderMenu, mountWhatsApp, accentTitle, SOCIALS } from './common.js';
 import { player, mountMiniPlayer, bindTrackList } from './player.js';
 import { initHeroScene } from './hero3d.js';
 
 const $ = (s, r = document) => r.querySelector(s);
 
 const content = await loadContent();
-const { site, services, gallery, clips, artists } = content;
+const { site, services, gallery, clips, artists, team, teamCategories } = content;
 
 setMeta(site);
+applyColors(site);
+renderMenu(site);
 initNav();
 mountMiniPlayer();
+mountWhatsApp(site);
+
+/* ---------- bölüm sırası, kanal kodları, başlıklar ---------- */
+// panelde belirlenen sıraya göre dizilir; gizlenenler sayfadan çıkar
+const main = $('#app');
+let ch = 0;
+for (const s of site.sections) {
+  const el = main.querySelector(`[data-section="${s.id}"]`);
+  if (!el) continue;
+  main.append(el);
+  // gizli bölüm DOM'da kalır (form vb. kodu bozulmasın) ama görünmez ve sahne hesabına girmez
+  if (!s.visible) { el.hidden = true; continue; }
+  ch += 1;
+  el.dataset.scene = s.scene === 'vinyl' ? 2 : 1;
+  el.dataset.fade = s.fade;
+  $('[data-ch]', el).textContent = s.channel || `CH-${String(ch).padStart(2, '0')}`;
+  $('[data-label]', el).textContent = s.label;
+  $('[data-title]', el).innerHTML = accentTitle(s.title);
+  const text = $('[data-text]', el);
+  if (text) { text.textContent = s.text; text.hidden = !s.text; }
+}
 
 /* ---------- render ---------- */
 $('[data-kicker]').textContent = site.heroKicker;
@@ -23,14 +46,6 @@ $('[data-hero-cta]').textContent = site.heroCta || 'Seans Ayırt';
 const mq = (site.marquee || []).map((m) => `<span>${esc(m)}</span>`).join('');
 $('[data-marquee]').innerHTML = mq + mq;
 
-// başlığın son kelimesi italik serif vurgu olur
-const accentTitle = (t) => {
-  const words = String(t || '').trim().split(/\s+/);
-  const last = words.pop();
-  const half = Math.ceil(words.length / 2);
-  return splitLines(`${esc(words.slice(0, half).join(' '))}|${esc(words.slice(half).join(' '))} <span class="serif">${esc(last)}</span>`);
-};
-$('[data-about-title]').innerHTML = accentTitle(site.aboutTitle);
 $('[data-about]').innerHTML = (site.about || []).map((p) => `<p>${esc(p)}</p>`).join('');
 $('[data-stats]').innerHTML = (site.stats || []).map((s) => `<div class="stat reveal"><b>${esc(s.value)}</b><span class="mono">${esc(s.label)}</span></div>`).join('');
 
@@ -55,22 +70,48 @@ const rowB = gallery.slice(half).map((g, i) => shot(g, i + half));
 // satırlar ekrandan geniş olsun diye tekrar edilir
 $('[data-gallery]').innerHTML = `<div class="studio-track">${[...rowA, ...rowA].join('')}</div><div class="studio-track">${[...rowB, ...rowB, ...rowB].join('')}</div>`;
 
+const sleeveTag = (a, i) => a.tag || `PM-${String(i + 1).padStart(3, '0')}`;
 $('[data-artists]').innerHTML = artists.map((a, i) => `
-  <a class="sleeve reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || '#ff8a1f')}">
+  <a class="sleeve reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || site.colors.accent)}">
     <div class="sleeve-stage">
       <div class="vinyl"><img src="${esc(a.tracks?.[0]?.cover || a.image)}" alt=""></div>
       <div class="sleeve-cover">
         <img src="${esc(a.image)}" alt="${esc(a.name)}" loading="lazy">
-        <span class="sleeve-tag mono">PM-${String(i + 1).padStart(3, '0')}</span>
+        <span class="sleeve-tag mono">${esc(sleeveTag(a, i))}</span>
         <h3 class="display sleeve-name">${esc(a.name)}</h3>
       </div>
     </div>
     <div class="sleeve-meta mono"><b>${esc(a.role || '')}</b><span>${a.tracks?.length || 0} parça →</span></div>
   </a>`).join('');
 
+// kadro: sanatçılar + kategorili ekip (prodüktör, yönetmen…); boş kategoriler gösterilmez
+const cats = [site.artistsLabel, ...teamCategories.filter((c) => team.some((m) => m.category === c))];
+const tabsEl = $('[data-team-tabs]');
+const teamEl = $('[data-team]');
+const memberCard = (m) => {
+  const links = SOCIALS.filter(([k]) => m.socials?.[k]).map(([k, n]) => `<a href="${esc(m.socials[k])}" target="_blank" rel="noopener">${n} ↗</a>`).join('');
+  return `
+  <div class="member">
+    <div class="member-img">${m.image ? `<img src="${esc(m.image)}" alt="${esc(m.name)}" loading="lazy">` : ''}</div>
+    <h3 class="display">${esc(m.name)}</h3>
+    <div class="mono member-role">${esc(m.role || m.category)}</div>
+    ${links ? `<div class="member-links mono" lang="en">${links}</div>` : ''}
+  </div>`;
+};
+const showCat = (i) => {
+  tabsEl.querySelectorAll('button').forEach((b, k) => b.setAttribute('aria-selected', k === i));
+  $('[data-artists]').hidden = i !== 0;
+  teamEl.hidden = i === 0;
+  if (i > 0) teamEl.innerHTML = team.filter((m) => m.category === cats[i]).map(memberCard).join('');
+};
+if (cats.length > 1) {
+  tabsEl.innerHTML = cats.map((c, i) => `<button role="tab" aria-selected="${i === 0}">${esc(c)}</button>`).join('');
+  tabsEl.querySelectorAll('button').forEach((b, i) => b.addEventListener('click', () => showCat(i)));
+} else tabsEl.remove();
+
 // sanatçılardan sırayla birer parça alıp "son çıkanlar" listesi
 const releases = [];
-const pools = artists.map((a) => (a.tracks || []).filter((t) => t.preview).map((t) => ({ ...t, artistImage: a.image, slug: a.slug })));
+const pools = artists.map((a) => (a.tracks || []).filter((t) => t.preview).map((t) => ({ ...t, artistImage: a.image, slug: a.slug, profile: a.socials?.spotify })));
 for (let r = 0; r < 4; r++) pools.forEach((p) => p[r] && releases.push(p[r]));
 const relEl = $('[data-releases]');
 relEl.innerHTML = releases.map((t, i) => `
@@ -98,7 +139,6 @@ document.querySelectorAll('[data-yt]').forEach((m) => m.addEventListener('click'
   m.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${m.dataset.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 }, { once: true }));
 
-$('[data-contact-title]').innerHTML = accentTitle(site.contactTitle);
 $('[data-contact-text]').textContent = site.contactText;
 const mapsHref = site.mapLink || `https://maps.google.com/?q=${encodeURIComponent(site.mapQuery)}`;
 $('[data-contact]').innerHTML = `
@@ -107,7 +147,6 @@ $('[data-contact]').innerHTML = `
   <a href="https://wa.me/${esc(site.whatsapp)}" target="_blank" rel="noopener"><span class="mono">WhatsApp</span><span>Mesaj gönder →</span></a>
   <a href="mailto:${esc(site.email)}"><span class="mono">E-posta</span><span>${esc(site.email)}</span></a>
   <a href="${esc(site.instagram)}" target="_blank" rel="noopener"><span class="mono">Instagram</span><span>@${esc(site.instagram.split('/').filter(Boolean).pop())}</span></a>`;
-$('[data-menu-contact]').innerHTML = `${esc(site.phone)}<br>${esc(site.email)}`;
 renderFooter(site);
 
 // harita: görünür olunca yüklenir
@@ -120,22 +159,32 @@ new IntersectionObserver(([e], o) => {
     <a class="btn" href="${esc(mapsHref)}" target="_blank" rel="noopener">Yol tarifi al ${icons.arrowUpRight}</a>`;
 }, { rootMargin: '400px' }).observe(mapEl);
 
-// form → WhatsApp / e-posta
-$('[data-form]').addEventListener('submit', (e) => {
+// form → yönetim paneline kaydedilir, ayrıca WhatsApp / e-posta uygulamasında hazır açılır
+// (bilgisayarda e-posta uygulaması yoksa mesaj yine panele düşer)
+$('[data-form]').addEventListener('submit', async (e) => {
   e.preventDefault();
-  const f = new FormData(e.target);
+  const form = e.target;
+  const f = new FormData(form);
   const via = e.submitter?.dataset.via || 'wa';
-  const text = `Merhaba Presto Müzik,\n\nAd: ${f.get('name')}\nTelefon: ${f.get('phone') || '-'}\nHizmet: ${f.get('service')}\n\n${f.get('message') || ''}`;
+  const msg = { name: f.get('name'), phone: f.get('phone'), service: f.get('service'), message: f.get('message'), via, website: f.get('website') };
+  const text = `Merhaba Presto Müzik,\n\nAd: ${msg.name}\nTelefon: ${msg.phone || '-'}\nHizmet: ${msg.service}\n\n${msg.message || ''}`;
+  // WhatsApp penceresi tıklamayla aynı anda açılmalı, yoksa tarayıcı engeller
   if (via === 'wa') open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
-  else location.href = `mailto:${site.email}?subject=${encodeURIComponent(`Seans talebi — ${f.get('service')}`)}&body=${encodeURIComponent(text)}`;
+  const note = $('[data-form-note]');
+  const sent = await fetch('api/messages', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(msg) })
+    .then((r) => r.ok).catch(() => false);
+  if (sent) { note.textContent = 'Mesajın bize ulaştı, en kısa sürede dönüş yapacağız.'; form.reset(); }
+  if (via === 'mail') location.href = `mailto:${site.email}?subject=${encodeURIComponent(`Seans talebi — ${msg.service}`)}&body=${encodeURIComponent(text)}`;
 });
 
 initReveal();
+// giriş butonları ekranın alt kenarında; scroll beklemeden görünsün
+document.querySelectorAll('.hero .reveal').forEach((el) => el.classList.add('is-in'));
 
 /* ---------- 3D sahne + scroll ---------- */
 let scene3d = null;
 try {
-  scene3d = await initHeroScene($('#scene'), { logoUrl: 'assets/pm-logo.png' });
+  scene3d = await initHeroScene($('#scene'), { logoUrl: 'assets/pm-logo.png', colors: site.colors, logoScale: site.logoScale });
 } catch (err) {
   console.warn('WebGL başlatılamadı', err);
 }
@@ -151,13 +200,13 @@ function onScroll() {
   const mid = scrollY + innerHeight * 0.5;
   let cur = sections[0];
   for (const s of sections) if (s.offsetTop <= mid) cur = s;
-  scene3d?.setTarget(Number(cur.dataset.scene), Number(cur.dataset.fade || 1));
+  scene3d?.setTarget(Number(cur.dataset.scene), Number(cur.dataset.fade ?? 1));
   // her bölümün arkasında farklı bir stüdyo fotoğrafı
   if (gallery.length) showBackdrop(gallery[sections.indexOf(cur) % gallery.length].src);
 
   // stüdyo sıraları: bölüm ekrandan geçerken 0→1
-  const r = studio.getBoundingClientRect();
-  if (r.bottom > 0 && r.top < innerHeight) {
+  const r = studio?.getBoundingClientRect();
+  if (r && r.bottom > 0 && r.top < innerHeight) {
     const p = (innerHeight - r.top) / (innerHeight + r.height);
     rows.forEach((row, i) => {
       const max = Math.max(0, row.scrollWidth - innerWidth);
@@ -181,14 +230,15 @@ onScroll();
   setTimeout(() => requestAnimationFrame(meterLoop), playing ? 0 : 140);
 })();
 
-// hizmet listesi: imleci takip eden stüdyo fotoğrafı
+// hizmet listesi: imleci takip eden fotoğraf (panelde seçilmediyse stüdyo galerisinden)
 if (!isTouch) {
   const prev = $('.svc-preview');
   const img = prev.querySelector('img');
-  let px = 0, py = 0, tx = 0, ty = 0, raf;
+  let px = 0, py = 0, tx = 0, ty = 0;
   document.querySelectorAll('.svc').forEach((row) => {
     row.addEventListener('pointerenter', () => {
-      img.src = gallery[Number(row.dataset.i) % gallery.length]?.src || '';
+      const i = Number(row.dataset.i);
+      img.src = services[i]?.image || gallery[i % gallery.length]?.src || '';
       prev.classList.add('is-on');
     });
     row.addEventListener('pointerleave', () => prev.classList.remove('is-on'));
@@ -197,7 +247,7 @@ if (!isTouch) {
   const follow = () => {
     px += (tx - px) * 0.14; py += (ty - py) * 0.14;
     prev.style.left = `${px}px`; prev.style.top = `${py}px`;
-    raf = requestAnimationFrame(follow);
+    requestAnimationFrame(follow);
   };
   follow();
 }

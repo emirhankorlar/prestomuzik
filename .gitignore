@@ -5,3 +5,5 @@ data/backups/
 .DS_Store
 node_modules/
 data/imports/
+# iletişim formu mesajları (kişisel veri)
+data/messages/

@@ -99,6 +99,26 @@ input[type=color] { padding: 4px; height: 42px; width: 70px; cursor: pointer; }
 .callout .f { flex: 1; min-width: 240px; }
 .callout p { flex-basis: 100%; margin: 0; font-size: 13px; color: var(--mute); }
 
+/* onay kutusu, kaydırıcı */
+.f.check { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; align-self: end; }
+.f.check input { width: 18px; height: 18px; accent-color: var(--accent); margin: 0; flex: none; }
+.range { display: flex; align-items: center; gap: 12px; }
+.range input { padding: 0; border: 0; accent-color: var(--accent); background: none; }
+.range-val { font-family: 'JetBrains Mono', monospace; font-size: 13px; min-width: 48px; text-align: right; }
+select { appearance: auto; }
+
+/* mesajlar */
+.msgs { display: grid; gap: 12px; }
+.msg { border: 1px solid var(--line); border-radius: 12px; background: var(--bg-2); padding: 14px 16px; }
+.msg.new { border-color: rgba(255, 138, 31, .5); }
+.msg-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.msg-head b { font-size: 16px; }
+.msg-meta { color: var(--mute); font-size: 13px; margin-left: auto; }
+.badge { background: var(--accent); color: #140c04; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+.msg-info { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 6px; font-size: 14px; color: var(--mute); }
+.msg-info a { color: var(--accent); }
+.msg p { margin: 10px 0 0; white-space: pre-wrap; }
+
 .toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 200%); opacity: 0; background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 10px; font-weight: 600; transition: transform .4s cubic-bezier(.2, .7, .1, 1), opacity .3s; z-index: 20; max-width: calc(100vw - 32px); }
 .toast.on { transform: translate(-50%, 0); opacity: 1; }
 .toast.bad { background: var(--red); color: #fff; }

@@ -1,5 +1,5 @@
 // Sanatçı sayfası 3D sahnesi: sanatçı fotoğrafı bir plak kılıfında durur, arkasından plak kayarak çıkar.
-// Şarkı çalarken plak 33 devirde döner, ortasında çalan parçanın kapağı görünür; bas ile fotoğraf hafifçe dalgalanır.
+// Şarkı çalarken plak 33 devirde döner, ortasında çalan parçanın kapağı görünür. Fotoğraf sabit kalır (dalga efekti yok).
 import * as THREE from 'three';
 import { player } from './player.js';
 import { isTouch } from './common.js';
@@ -8,14 +8,13 @@ const sleeveFrag = /* glsl */ `
   uniform sampler2D uMap;
   uniform vec2 uCrop;
   uniform vec3 uAccent;
-  uniform float uTime, uBass, uIntro;
+  uniform float uTime, uIntro;
   varying vec2 vUv;
   float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
   void main() {
     if (vUv.y > uIntro * 1.2) discard;                              // giriş: alttan açılan perde
     vec2 uv = vUv;
     vec2 c = uv - 0.5;
-    uv += normalize(c + 1e-4) * sin(length(c) * 34.0 - uTime * 7.0) * uBass * 0.006;
     vec3 col = texture2D(uMap, (uv - 0.5) * uCrop + 0.5).rgb;
     float lum = dot(col, vec3(0.299, 0.587, 0.114));
     col = mix(col, col * uAccent * 1.5, (1.0 - lum) * 0.18);       // gölgelerde hafif vurgu rengi
@@ -118,7 +117,7 @@ export async function initPortrait(canvas, { image, accent = '#ff8a1f', cover })
 
   const sleeveU = {
     uMap: { value: photo }, uCrop: { value: cropFor(photo) }, uAccent: { value: accentCol },
-    uTime: { value: 0 }, uBass: { value: 0 }, uIntro: { value: 0 },
+    uTime: { value: 0 }, uIntro: { value: 0 },
   };
   group.add(new THREE.Mesh(new THREE.PlaneGeometry(S, S), new THREE.ShaderMaterial({ vertexShader: vert, fragmentShader: sleeveFrag, uniforms: sleeveU })));
 
@@ -163,7 +162,6 @@ export async function initPortrait(canvas, { image, accent = '#ff8a1f', cover })
 
     const lv = player.levels();
     const playing = !player.audio.paused;
-    sleeveU.uBass.value = lerp(sleeveU.uBass.value, lv.bass, 0.35);
     glowU.uLevel.value = lerp(glowU.uLevel.value, lv.level, 0.2);
 
     // plak: çalarken dışarı kayar ve yavaşça döner
@@ -172,7 +170,6 @@ export async function initPortrait(canvas, { image, accent = '#ff8a1f', cover })
     vinyl.rotation.z -= spin * dt;
     vinylU.uRot.value = vinyl.rotation.z;
     vinyl.position.x = slide * S * 0.52;
-    vinyl.scale.setScalar(1 + lv.bass * 0.025);
 
     const sp = Math.min(1, scrollY / innerHeight);
     group.position.set(base.x, base.y + sp * 2.2 + Math.sin(t * 0.8) * 0.05, -sp * 1.5);

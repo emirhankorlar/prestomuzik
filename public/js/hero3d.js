@@ -14,6 +14,7 @@ const vertex = /* glsl */ `
   attribute float aRand;
   varying float vRand;
   varying float vA;
+  varying float vShape;
 
   vec3 hash3(float n) { return fract(sin(vec3(n, n + 1.7, n + 3.1)) * 43758.5453) * 2.0 - 1.0; }
 
@@ -60,26 +61,31 @@ const vertex = /* glsl */ `
     gl_PointSize = uSize * (0.55 + aRand * 0.9) * (1.0 + uLevel * 0.9) * uPixel / -mv.z;
     vRand = aRand;
     vA = mix(1.0, 0.7, a);
+    vShape = a;
   }
 `;
 
 const fragment = /* glsl */ `
-  uniform vec3 uColA, uColB;
+  uniform vec3 uColA, uColB, uFieldA, uFieldB;
   uniform float uFade;
   varying float vRand;
   varying float vA;
+  varying float vShape;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5) discard;
     float g = pow(smoothstep(0.5, 0.0, d), 1.7);
-    vec3 col = mix(uColA, uColB, smoothstep(0.55, 1.0, vRand));
+    // logo iki renkli (turuncu + beyaz), dalga ve plak vurgu renklerinde
+    vec3 logoCol = mix(uColA, uColB, smoothstep(0.6, 0.72, vRand));
+    vec3 fieldCol = mix(uFieldA, uFieldB, smoothstep(0.55, 1.0, vRand));
+    vec3 col = mix(logoCol, fieldCol, vShape);
     col = mix(col, vec3(1.0, 0.93, 0.84), step(0.95, vRand) * 0.85);
     float k = g * vA * uFade;
     gl_FragColor = vec4(col * k * 1.5, k * 0.7); // önceden çarpılmış alfa, toplamalı
   }
 `;
 
-async function sampleLogo(url, res) {
+async function sampleLogo(url, res, height) {
   const img = new Image();
   img.src = url;
   await img.decode();
@@ -98,14 +104,15 @@ async function sampleLogo(url, res) {
       }
     }
   }
-  // logoyu ortala ve ~4.4 birim yüksekliğe ölçekle
-  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, scale = 4.4 / (maxY - minY);
+  // logoyu ortala ve istenen yüksekliğe ölçekle
+  const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2, scale = height / (maxY - minY);
   const out = [];
   for (let i = 0; i < pts.length; i += 2) out.push((pts[i] - cx) * scale, -(pts[i + 1] - cy) * scale);
+  out.halfW = ((maxX - minX) / 2) * scale;
   return out;
 }
 
-export async function initHeroScene(canvas, { logoUrl }) {
+export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 1.1 }) {
   const mobile = innerWidth < 760;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 2));
@@ -114,7 +121,8 @@ export async function initHeroScene(canvas, { logoUrl }) {
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
 
-  const logo2d = await sampleLogo(logoUrl, mobile ? 140 : 200);
+  const logoH = 4.4 * Math.min(1.4, Math.max(0.6, logoScale));
+  const logo2d = await sampleLogo(logoUrl, mobile ? 150 : 220, logoH);
   const layers = 2;
   const N = (logo2d.length / 2) * layers;
 
@@ -157,7 +165,9 @@ export async function initHeroScene(canvas, { logoUrl }) {
     uSize: { value: mobile ? 0.1 : 0.088 }, uPixel: { value: 0 },
     uBass: { value: 0 }, uMid: { value: 0 }, uLevel: { value: 0 },
     uMouse: { value: new THREE.Vector2(99, 99) }, uLogoX: { value: 0 },
-    uColA: { value: new THREE.Color('#ffa448') }, uColB: { value: new THREE.Color('#ff3b2f') },
+    uColA: { value: new THREE.Color(colors.logo1 || '#ff8a1f') }, uColB: { value: new THREE.Color(colors.logo2 || '#ffffff') },
+    uFieldA: { value: new THREE.Color(colors.accent || '#ff8a1f').lerp(new THREE.Color('#ffffff'), 0.15) },
+    uFieldB: { value: new THREE.Color(colors.accent2 || '#ff3b2f') },
     uFade: { value: 1 },
   };
   const mat = new THREE.ShaderMaterial({
@@ -177,13 +187,13 @@ export async function initHeroScene(canvas, { logoUrl }) {
   for (let i = 0; i < dustN; i++) { dust[i * 3] = (Math.random() - 0.5) * 30; dust[i * 3 + 1] = (Math.random() - 0.5) * 18; dust[i * 3 + 2] = -Math.random() * 20 - 2; }
   const dustGeo = new THREE.BufferGeometry();
   dustGeo.setAttribute('position', new THREE.BufferAttribute(dust, 3));
-  const dustMat = new THREE.PointsMaterial({ color: 0xffb070, size: 0.04, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending });
+  const dustMat = new THREE.PointsMaterial({ color: new THREE.Color(colors.accent || '#ff8a1f').lerp(new THREE.Color('#ffffff'), 0.35), size: 0.04, transparent: true, opacity: 0.35, depthWrite: false, blending: THREE.AdditiveBlending });
   const dustPts = new THREE.Points(dustGeo, dustMat);
   scene.add(dustPts);
 
   // kamera durakları: logo → arazi → plak
   const shots = [
-    { pos: new THREE.Vector3(0, 0, mobile ? 11.5 : 8.6), look: new THREE.Vector3(0, mobile ? -0.4 : -0.3, 0) },
+    { pos: new THREE.Vector3(0, 0, mobile ? 11.5 : 8.6), look: new THREE.Vector3(0, mobile ? -0.4 : -0.2, 0) },
     { pos: new THREE.Vector3(0, 1.4, 7.2), look: new THREE.Vector3(0, -1.3, 0) },
     { pos: new THREE.Vector3(0, 3.6, 5.6), look: new THREE.Vector3(0, 0.2, 0) },
   ];
@@ -196,8 +206,9 @@ export async function initHeroScene(canvas, { logoUrl }) {
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     uniforms.uPixel.value = h * renderer.getPixelRatio() * 0.5;
-    // geniş ekranda logo sağa kayar, başlıkla çakışmaz
-    uniforms.uLogoX.value = w / h > 1.25 ? Math.min(3.2, (w / h) * 1.45) : 0;
+    // geniş ekranda logo sağa kayar, başlıkla çakışmaz ve ekrandan taşmaz
+    const halfW = Math.tan(THREE.MathUtils.degToRad(20)) * shots[0].pos.z * camera.aspect;
+    uniforms.uLogoX.value = w / h > 1.25 ? Math.max(0, Math.min(halfW - logo2d.halfW - 0.8, (w / h) * 1.6)) : 0;
   };
   resize();
   addEventListener('resize', resize);

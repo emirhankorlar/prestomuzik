@@ -7,7 +7,6 @@
     "heroKicker": "Eskişehir · Kayıt & Prodüksiyon Stüdyosu",
     "heroTitle": "Sesin en hızlı hali.",
     "heroCta": "Seans Ayırt",
-    "aboutTitle": "Notaların ötesinde bir anlatım.",
     "about": [
       "Presto Müzik, sanatçıların yaratıcılıklarını en üst düzeyde ifade edebilmeleri için platform sağlayan, Eskişehir'de kayıt, prodüksiyon ve müziğe dair çeşitli hizmetler veren bir müzik stüdyosudur.",
       "Profesyonel kayıt odamız ve deneyimli prodüksiyon ekibimizle sanatçılarımızın vizyonuna sadık kalıp müziklerini hayata geçiriyoruz. Eserlerinizi geniş bir dinleyici kitlesiyle buluşturmak için pazarlama ve dağıtım stratejileri de geliştiriyoruz."
@@ -40,7 +39,6 @@
       "Jingle",
       "Seslendirme"
     ],
-    "contactTitle": "Aynı notada buluşalım.",
     "contactText": "Sorunuz mu var, bir işbirliği mi düşünüyorsunuz? Yazın, stüdyoyu birlikte gezelim.",
     "phone": "+90 541 125 54 26",
     "whatsapp": "905411255426",
@@ -51,52 +49,158 @@
     "mapLink": "https://share.google/qnLBIe2ZuLNMY1Yd6",
     "instagram": "https://www.instagram.com/prestomuzik.co/",
     "youtube": "https://www.youtube.com/c/prestomuzikarsiv",
-    "spotifyPlaylist": "https://open.spotify.com/playlist/6wpWqNqjAZi8gJAAfj1HZM"
+    "spotifyPlaylist": "https://open.spotify.com/playlist/6wpWqNqjAZi8gJAAfj1HZM",
+    "colors": {
+      "accent": "#ff8a1f",
+      "accent2": "#ff3b2f",
+      "logo1": "#ff8a1f",
+      "logo2": "#ffffff"
+    },
+    "logoScale": 1.1,
+    "menuLinks": [],
+    "sections": [
+      {
+        "id": "about",
+        "visible": true,
+        "channel": "",
+        "label": "Hakkımızda",
+        "menuName": "Hakkımızda",
+        "menu": false,
+        "title": "Notaların ötesinde bir anlatım.",
+        "text": "",
+        "scene": "wave",
+        "fade": 0.45
+      },
+      {
+        "id": "services",
+        "visible": true,
+        "channel": "",
+        "label": "Neler yapıyoruz",
+        "menuName": "Hizmetler",
+        "menu": true,
+        "title": "Hizmet listesi",
+        "text": "Fikirden yayına tek çatı altında: kayıt, prodüksiyon, mix & mastering, görsel ve dağıtım.",
+        "scene": "wave",
+        "fade": 0.45
+      },
+      {
+        "id": "studio",
+        "visible": true,
+        "channel": "",
+        "label": "Stüdyo",
+        "menuName": "Stüdyo",
+        "menu": true,
+        "title": "İçeriden bir tur",
+        "text": "Stüdyoyu gezmeye gel",
+        "scene": "wave",
+        "fade": 0.3
+      },
+      {
+        "id": "artists",
+        "visible": true,
+        "channel": "",
+        "label": "Kadro",
+        "menuName": "Sanatçılar",
+        "menu": true,
+        "title": "Presto kadrosu",
+        "text": "Stüdyomuzda üreten, Presto çatısı altında yayınlanan sanatçılar ve ekibimiz. Plağı çek, dinlemeye başla.",
+        "scene": "vinyl",
+        "fade": 0.4
+      },
+      {
+        "id": "tracks",
+        "visible": true,
+        "channel": "",
+        "label": "Stüdyodan çıkanlar",
+        "menuName": "Dinle",
+        "menu": false,
+        "title": "Son çıkanlar — dinle.",
+        "text": "",
+        "scene": "vinyl",
+        "fade": 0.4
+      },
+      {
+        "id": "clips",
+        "visible": true,
+        "channel": "",
+        "label": "Presto Medya",
+        "menuName": "Klipler",
+        "menu": true,
+        "title": "Çektiğimiz klipler",
+        "text": "YouTube'da izle",
+        "scene": "vinyl",
+        "fade": 0.35
+      },
+      {
+        "id": "contact",
+        "visible": true,
+        "channel": "",
+        "label": "İletişim",
+        "menuName": "İletişim",
+        "menu": false,
+        "title": "Aynı notada buluşalım.",
+        "text": "",
+        "scene": "wave",
+        "fade": 0.45
+      }
+    ],
+    "artistsLabel": "Sanatçılar"
   },
   "services": [
     {
       "title": "Vokal & Enstrüman Kayıt",
-      "text": "Akustik kabinde temiz kayıt."
+      "text": "Akustik kabinde temiz kayıt.",
+      "image": ""
     },
     {
       "title": "Mix & Mastering",
-      "text": "Platformlara hazır, dengeli ses."
+      "text": "Platformlara hazır, dengeli ses.",
+      "image": ""
     },
     {
       "title": "Beat Prodüksiyon",
-      "text": "Size özel altyapılar."
+      "text": "Size özel altyapılar.",
+      "image": ""
     },
     {
       "title": "Seslendirme & Dublaj",
-      "text": "Reklam, belgesel, kurumsal."
+      "text": "Reklam, belgesel, kurumsal.",
+      "image": ""
     },
     {
       "title": "Dijital Dağıtım",
-      "text": "Spotify, Apple Music ve tümü."
+      "text": "Spotify, Apple Music ve tümü.",
+      "image": ""
     },
     {
       "title": "Ses Tasarımı",
-      "text": "Film, oyun ve içerik için."
+      "text": "Film, oyun ve içerik için.",
+      "image": ""
     },
     {
       "title": "Marka Jingle",
-      "text": "Akılda kalan marka melodisi."
+      "text": "Akılda kalan marka melodisi.",
+      "image": ""
     },
     {
       "title": "Podcast Kayıt",
-      "text": "Kayıt, kurgu, yayına hazır."
+      "text": "Kayıt, kurgu, yayına hazır.",
+      "image": ""
     },
     {
       "title": "Live Performans",
-      "text": "Stüdyoda canlı kayıt ve çekim."
+      "text": "Stüdyoda canlı kayıt ve çekim.",
+      "image": ""
     },
     {
       "title": "Stüdyo Kiralama",
-      "text": "Oda, ekipman ve teknisyen hazır."
+      "text": "Oda, ekipman ve teknisyen hazır.",
+      "image": ""
     },
     {
       "title": "Klip & Görsel Prodüksiyon",
-      "text": "Klip, kurgu, sosyal medya."
+      "text": "Klip, kurgu, sosyal medya.",
+      "image": ""
     }
   ],
   "gallery": [
@@ -354,5 +458,12 @@
         }
       ]
     }
+  ],
+  "team": [],
+  "teamCategories": [
+    "Prodüktör",
+    "Yönetmen",
+    "AI Video Prodüktör",
+    "Cover Art Artist"
   ]
 }

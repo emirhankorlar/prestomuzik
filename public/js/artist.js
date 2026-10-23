@@ -1,4 +1,4 @@
-import { loadContent, initNav, initReveal, initBackdrop, renderFooter, esc, icons, fmtTime, ytThumb, splitLines } from './common.js';
+import { loadContent, initNav, initReveal, initBackdrop, renderFooter, esc, icons, fmtTime, ytThumb, splitLines, applyColors, renderMenu, mountWhatsApp, accentTitle, clampRows, SOCIALS } from './common.js';
 import { player, mountMiniPlayer, bindTrackList } from './player.js';
 import { initPortrait } from './artist3d.js';
 
@@ -9,15 +9,20 @@ const slug = new URLSearchParams(location.search).get('id') || '';
 const artist = content.artists.find((a) => a.slug === slug);
 if (!artist) location.replace('index.html#sanatcilar');
 
-const accent = artist.accent || '#ff8a1f';
+applyColors(content.site);
+const accent = artist.accent || content.site.colors.accent;
 document.documentElement.style.setProperty('--accent', accent);
 document.title = `${artist.name} — Presto Müzik`;
 document.querySelector('meta[name="description"]').content = artist.bio?.[0] || `${artist.name}, Presto Müzik sanatçısı.`;
 
+renderMenu(content.site, { prefix: 'index.html', extra: [{ name: 'Ana Sayfa', href: './' }] });
 initNav();
 mountMiniPlayer();
+mountWhatsApp(content.site);
 
-const tracks = (artist.tracks || []).map((t) => ({ ...t, artistImage: artist.image }));
+// önizlemeden tam şarkıya: parçaya özel link varsa o, yoksa sanatçının Spotify profili
+const profile = artist.socials?.spotify || (artist.spotifyId && `https://open.spotify.com/artist/${artist.spotifyId}`) || '';
+const tracks = (artist.tracks || []).map((t) => ({ ...t, artistImage: artist.image, profile }));
 const playable = tracks.filter((t) => t.preview);
 
 /* ---------- render ---------- */
@@ -28,8 +33,13 @@ $('[data-tagline]').textContent = artist.tagline || '';
 $('[data-bio]').innerHTML = (artist.bio || []).map((p) => `<p>${esc(p)}</p>`).join('');
 
 const s = artist.socials || {};
-$('[data-links]').innerHTML = [['Spotify', s.spotify, 'Dinle'], ['YouTube', s.youtube, 'İzle'], ['Instagram', s.instagram, 'Takip et']]
-  .filter(([, u]) => u).map(([n, u, v]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${n} <span>${v} ↗</span></a>`).join('');
+$('[data-links]').innerHTML = SOCIALS.filter(([k]) => s[k])
+  .map(([k, n, v]) => `<a href="${esc(s[k])}" target="_blank" rel="noopener">${n} <span>${v} ↗</span></a>`).join('');
+
+$('[data-tracks-title]').innerHTML = accentTitle(artist.tracksTitle || 'Popüler parçalar');
+const profileLink = $('[data-profile]');
+if (profile) profileLink.href = profile;
+else profileLink.closest('p').hidden = true;
 
 const list = $('[data-tracks]');
 list.innerHTML = tracks.map((t, i) => `
@@ -41,11 +51,6 @@ list.innerHTML = tracks.map((t, i) => `
     <span class="track-play">${icons.play}<span class="eq"><i></i><i></i><i></i></span></span>
   </li>`).join('');
 bindTrackList(list, tracks);
-
-if (artist.spotifyId) {
-  $('[data-spotify]').innerHTML = `<iframe src="https://open.spotify.com/embed/artist/${esc(artist.spotifyId)}?theme=0" loading="lazy"
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" title="${esc(artist.name)} Spotify"></iframe>`;
-}
 
 const videos = artist.videos || [];
 if (!videos.length) $('#videolar').remove();
@@ -61,16 +66,17 @@ document.querySelectorAll('[data-yt]').forEach((m) => m.addEventListener('click'
   player.audio.pause();
   m.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${m.dataset.yt}?autoplay=1&rel=0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 }, { once: true }));
+clampRows($('[data-videos]'), $('[data-more]'));
 
 const others = content.artists.filter((a) => a.slug !== artist.slug);
 if (!others.length) document.querySelector('.a-others').remove();
 $('[data-others]').innerHTML = others.map((a, i) => `
-  <a class="sleeve reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || '#ff8a1f')}">
+  <a class="sleeve sleeve--sm reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || content.site.colors.accent)}">
     <div class="sleeve-stage">
       <div class="vinyl"><img src="${esc(a.tracks?.[0]?.cover || a.image)}" alt=""></div>
       <div class="sleeve-cover">
         <img src="${esc(a.image)}" alt="${esc(a.name)}" loading="lazy">
-        <span class="sleeve-tag mono">PM-${String(content.artists.indexOf(a) + 1).padStart(3, '0')}</span>
+        <span class="sleeve-tag mono">${esc(a.tag || `PM-${String(content.artists.indexOf(a) + 1).padStart(3, '0')}`)}</span>
         <h3 class="display sleeve-name">${esc(a.name)}</h3>
       </div>
     </div>
@@ -86,10 +92,17 @@ $('[data-now-toggle]').addEventListener('click', () => {
   if (player.state.track) player.toggle();
   else if (playable.length) player.play(playable, 0);
 });
-if (playable[0]) $('[data-now-title]').textContent = playable[0].title;
+const nowLink = $('[data-now-link]');
+const setNow = (t) => {
+  $('[data-now-title]').textContent = t.title;
+  const href = t.link || t.profile;
+  nowLink.hidden = !href;
+  if (href) { nowLink.href = href; nowLink.textContent = /spotify\.com/.test(href) ? "Spotify'da dinle ↗" : 'Tamamını dinle ↗'; }
+};
+if (playable[0]) setNow(playable[0]);
 player.on(({ track, playing }) => {
   now.classList.toggle('is-playing', playing);
-  if (track) $('[data-now-title]').textContent = track.title;
+  if (track) setNow(track);
 });
 player.audio.addEventListener('timeupdate', () => {
   const a = player.audio;
