@@ -163,7 +163,7 @@ select { appearance: auto; }
 .workspace.split { display: grid; grid-template-columns: minmax(400px, 1fr) minmax(420px, 46%); align-items: start; }
 .workspace.split .panel { max-width: none; padding-right: 24px; }
 .workspace.split .fields { grid-template-columns: 1fr; }
-.preview { position: sticky; top: 69px; height: calc(100vh - 69px); display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--surface-2); }
+.preview { position: sticky; top: var(--bar-h, 69px); height: calc(100vh - var(--bar-h, 69px)); display: flex; flex-direction: column; border-left: 1px solid var(--line); background: var(--surface-2); }
 .pv-bar { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface); border-bottom: 1px solid var(--line); }
 .pv-bar b { font-size: 13px; font-weight: 600; }
 .pv-note { font-size: 12px; color: var(--mute); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

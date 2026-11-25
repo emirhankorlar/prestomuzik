@@ -32,15 +32,29 @@ export const fmtTime = (s) => {
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 
 // Yönetim panelindeki canlı önizleme: panel, kaydedilmemiş içeriği sessionStorage'a yazar, site onu okur.
-const PREVIEW = new URLSearchParams(location.search).has('preview');
+export const PREVIEW = new URLSearchParams(location.search).has('preview');
+if (PREVIEW) {
+  const st = document.createElement('style');
+  st.textContent = 'html{scroll-behavior:auto!important}.loader{display:none!important}.pv-flash{outline:2px solid #ff7a2e;outline-offset:8px;border-radius:6px;animation:pvf 1.6s ease-out forwards}@keyframes pvf{0%,60%{outline-color:#ff7a2e}100%{outline-color:transparent}}';
+  document.head.append(st);
+}
+// panelde düzenlenen yeri ortaya kaydırır ve kısaca çerçeveler
+export function focusPreview(sel) {
+  const el = sel && document.querySelector(sel);
+  if (!el || el.hidden) return false;
+  el.scrollIntoView({ block: 'center', behavior: 'instant' });
+  el.classList.remove('pv-flash');
+  void el.offsetWidth;
+  el.classList.add('pv-flash');
+  return true;
+}
 export function restorePreviewScroll() {
   if (!PREVIEW) return;
   setTimeout(() => {
-    let y = 0;
-    try { y = Number(sessionStorage.getItem('pm_preview_y')) || 0; sessionStorage.removeItem('pm_preview_y'); } catch { /* yok */ }
-    if (y) scrollTo(0, y);
-    else if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
-  }, 120);
+    let sel = '';
+    try { sel = sessionStorage.getItem('pm_preview_focus') || ''; } catch { /* yok */ }
+    if (!focusPreview(sel) && location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  }, 150);
 }
 
 export async function loadContent() {
@@ -173,6 +187,8 @@ export function initReveal(root = document) {
       if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }
     });
   }, { rootMargin: '0px 0px -12% 0px' });
+  // önizlemede animasyon beklemeden hemen görünür
+  if (PREVIEW) { root.querySelectorAll('.reveal, .split').forEach((el) => el.classList.add('is-in')); return; }
   root.querySelectorAll('.reveal, .split').forEach((el) => io.observe(el));
 }
 
@@ -184,6 +200,7 @@ export function splitLines(html) {
 export function hideLoader() {
   const l = document.querySelector('.loader');
   if (!l) return;
+  if (PREVIEW) { l.remove(); return; }
   setTimeout(() => l.classList.add('is-done'), 250);
   setTimeout(() => l.remove(), 1400);
 }

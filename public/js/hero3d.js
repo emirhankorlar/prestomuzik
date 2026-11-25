@@ -2,7 +2,7 @@
 // arazisine ve ardından dönen bir plağa dönüşür. Çalan önizleme müziğine tepki verir.
 import * as THREE from 'three';
 import { player } from './player.js';
-import { isTouch, reducedMotion } from './common.js';
+import { isTouch, reducedMotion, PREVIEW } from './common.js';
 
 const vertex = /* glsl */ `
   uniform float uTime, uMorph, uSize, uPixel, uBass, uMid, uLevel, uIntro;
@@ -166,7 +166,7 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
   geo.setAttribute('aRand', new THREE.BufferAttribute(aRand, 1));
 
   const uniforms = {
-    uTime: { value: 0 }, uMorph: { value: 0 }, uIntro: { value: reducedMotion ? 1 : 0 },
+    uTime: { value: 0 }, uMorph: { value: 0 }, uIntro: { value: reducedMotion || PREVIEW ? 1 : 0 },
     uSize: { value: mobile ? 0.075 : 0.088 }, uPixel: { value: 0 },
     uBass: { value: 0 }, uMid: { value: 0 }, uLevel: { value: 0 },
     uMouse: { value: new THREE.Vector2(99, 99) }, uLogoX: { value: 0 },

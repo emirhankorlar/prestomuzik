@@ -247,11 +247,11 @@ const TABS = [
 /* ---------- alan çizimi ---------- */
 
 function field(f, obj, rerender) {
-  const set = (v) => { obj[f.key] = v; setDirty(); };
+  const set = (v) => { obj[f.key] = v; pvFocus = focusFor(obj, f); setDirty(); };
   const val = obj[f.key];
   if (f.when && !f.when(obj)) return null;
   const placeholder = typeof f.placeholder === 'function' ? f.placeholder(obj) : f.placeholder;
-  const wrap = (input) => h('div', { class: `f${f.full ? ' full' : ''}` }, f.label && h('label', {}, f.label), input, f.help && h('div', { class: 'help' }, f.help));
+  const wrap = (input) => h('div', { class: `f${f.full ? ' full' : ''}`, onfocusin: () => focusPreviewNow(focusFor(obj, f)) }, f.label && h('label', {}, f.label), input, f.help && h('div', { class: 'help' }, f.help));
 
   switch (f.type) {
     case 'group':
@@ -424,7 +424,44 @@ function messagesPanel() {
 const PV_KEY = 'pm_preview_on';
 const PV_PAGE = { services: '#hizmetler', gallery: '#studyo', clips: '#klipler', team: '#sanatcilar' };
 let pvOn = (() => { try { return localStorage.getItem(PV_KEY) !== '0'; } catch { return true; } })();
-let pvTimer = null, pvSrc = '', pvLoaded = false;
+let pvTimer = null, pvSrc = '', pvLoaded = false, pvFocus = '';
+const SITE_FOCUS = { heroKicker: '.hero', heroCta: '.hero', heroTitle: '.hero', marquee: '.marquee', about: '#hakkimizda', stats: '#hakkimizda',
+  contactText: '#iletisim', phone: '#iletisim', whatsapp: '#iletisim', email: '#iletisim', address: '#iletisim', city: '#iletisim', mapQuery: '[data-map]', mapLink: '[data-map]',
+  instagram: '.footer', youtube: '.footer', spotifyPlaylist: '.footer', legalName: '.footer' };
+const SECTION_ANCHOR = { about: '#hakkimizda', services: '#hizmetler', studio: '#studyo', artists: '#sanatcilar', tracks: '#dinle', clips: '#klipler', contact: '#iletisim' };
+
+// düzenlenen alanın sitede nerede göründüğü (CSS seçici)
+function focusFor(obj, f) {
+  const k = f.key;
+  if (tab === 'services') { const i = content.services.indexOf(obj); return i >= 0 ? `.svc[data-i="${i}"]` : '#hizmetler'; }
+  if (tab === 'gallery') return '#studyo';
+  if (tab === 'clips') { const i = content.clips.indexOf(obj); return i >= 0 ? `[data-clips] .clip:nth-child(${i + 1})` : '#klipler'; }
+  if (tab === 'team') return '#sanatcilar';
+  if (tab === 'layout') {
+    if (obj.id && SECTION_ANCHOR[obj.id]) return SECTION_ANCHOR[obj.id];
+    return k === 'name' || k === 'url' ? '.nav' : '.hero';
+  }
+  if (tab === 'site') return SITE_FOCUS[k] || '.hero';
+  if (tab === 'artists') {
+    if (obj.youtubeId !== undefined) return '#videolar';
+    if (obj.preview !== undefined || k === 'tracksTitle') return '#parcalar';
+    if (['bio', 'instagram', 'youtube', 'spotify', 'tiktok', 'soundcloud'].includes(k)) return '.a-bio';
+    return '.a-hero';
+  }
+  return '';
+}
+function focusPreviewNow(sel) {
+  if (!sel || !pvLoaded) return;
+  pvFocus = sel;
+  try { frameApi().focusPreview(sel); } catch { /* sayfa henüz hazır değil */ }
+}
+const frameApi = () => ({ focusPreview: (sel) => {
+  const d = $('[data-frame]').contentDocument;
+  const el = d.querySelector(sel);
+  if (!el || el.hidden) return;
+  el.scrollIntoView({ block: 'center', behavior: 'instant' });
+  el.classList.remove('pv-flash'); void el.offsetWidth; el.classList.add('pv-flash');
+} });
 const wide = matchMedia('(min-width: 1180px)');
 
 function pvTarget() {
@@ -446,14 +483,14 @@ function syncPreview(force = false, reload = false) {
   $('[data-pv-toggle]').classList.toggle('on', pvOn);
   if (!target) return;
   fitFrame();
-  try { sessionStorage.setItem('pm_preview', JSON.stringify(content, (k, v) => (k.startsWith('_') ? undefined : v))); } catch { /* büyük içerik */ }
+  try { sessionStorage.setItem('pm_preview_focus', pvFocus || ''); sessionStorage.setItem('pm_preview', JSON.stringify(content, (k, v) => (k.startsWith('_') ? undefined : v))); } catch { /* büyük içerik */ }
   const base = target.replace(/#.*/, '');
   if (base !== pvSrc.replace(/#.*/, '') || force || !pvLoaded) {
     pvSrc = target; pvLoaded = false;
     frame.src = target;
   } else if (reload) {
     // aynı sayfa: kaydırma konumunu koruyarak yenile
-    try { sessionStorage.setItem('pm_preview_y', String(frame.contentWindow.scrollY || 0)); } catch { /* yok */ }
+    try { sessionStorage.setItem('pm_preview_focus', pvFocus || ''); } catch { /* yok */ }
     pvLoaded = false;
     frame.contentWindow.location.reload();
   }
@@ -461,7 +498,7 @@ function syncPreview(force = false, reload = false) {
 function schedulePreview() {
   if (!pvOn || !wide.matches) return;
   clearTimeout(pvTimer);
-  pvTimer = setTimeout(() => syncPreview(false, true), 700);
+  pvTimer = setTimeout(() => syncPreview(false, true), 350);
 }
 $('[data-pv-toggle]').addEventListener('click', () => {
   pvOn = !pvOn;
@@ -483,6 +520,7 @@ function fitFrame() {
   frame.style.marginLeft = mobile ? `${(stage.clientWidth - w * k) / 2}px` : '0';
 }
 new ResizeObserver(fitFrame).observe($('.pv-stage'));
+new ResizeObserver(() => document.documentElement.style.setProperty('--bar-h', `${$('.bar').offsetHeight}px`)).observe($('.bar'));
 document.querySelectorAll('[data-dev]').forEach((b) => b.addEventListener('click', () => {
   document.querySelectorAll('[data-dev]').forEach((x) => x.classList.toggle('on', x === b));
   $('[data-preview]').classList.toggle('is-mobile', b.dataset.dev === 'mobile');
@@ -500,7 +538,7 @@ function render() {
   tabs.forEach((x) => {
     if (groups[x.key]) nodes.push(h('div', { class: 'tab-group' }, groups[x.key]));
     const c = count(x);
-    nodes.push(h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
+    nodes.push(h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; pvFocus = PV_PAGE[x.key] || ''; render(); scrollTo(0, 0); } },
       ico(x.key), h('span', { class: 'lbl' }, x.label), c != null && h('span', { class: `count${x.key === '_messages' ? ' new' : ''}` }, c)));
   });
   $('[data-tabs]').replaceChildren(...nodes);
