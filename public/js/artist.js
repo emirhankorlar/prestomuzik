@@ -1,4 +1,4 @@
-import { loadContent, initNav, initReveal, initBackdrop, renderFooter, esc, icons, fmtTime, ytThumb, splitLines, applyColors, renderMenu, mountWhatsApp, accentTitle, clampRows, SOCIALS } from './common.js';
+import { restorePreviewScroll, loadContent, initNav, initReveal, initBackdrop, renderFooter, esc, icons, fmtTime, ytThumb, splitLines, applyColors, renderMenu, mountWhatsApp, accentTitle, clampRows, SOCIALS } from './common.js';
 import { player, mountMiniPlayer, bindTrackList } from './player.js';
 import { initPortrait } from './artist3d.js';
 
@@ -116,6 +116,7 @@ try {
   console.warn('WebGL başlatılamadı', err);
 }
 
+restorePreviewScroll();
 // sayfa başında büyük oynatıcı görünür; mini oynatıcı aşağı inince çıkar
 const onTop = () => document.body.classList.toggle('at-top', scrollY < innerHeight * 0.6);
 addEventListener('scroll', onTop, { passive: true });

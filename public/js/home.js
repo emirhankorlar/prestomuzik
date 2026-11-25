@@ -1,4 +1,4 @@
-import { loadContent, initNav, initReveal, initBackdrop, renderFooter, hideLoader, setMeta, esc, icons, fmtTime, ytThumb, splitLines, isTouch, applyColors, renderMenu, mountWhatsApp, accentTitle, SOCIALS } from './common.js';
+import { restorePreviewScroll, loadContent, initNav, initReveal, initBackdrop, renderFooter, hideLoader, setMeta, esc, icons, fmtTime, ytThumb, splitLines, isTouch, applyColors, renderMenu, mountWhatsApp, accentTitle, SOCIALS } from './common.js';
 import { player, mountMiniPlayer, bindTrackList } from './player.js';
 import { initHeroScene } from './hero3d.js';
 
@@ -189,6 +189,7 @@ try {
   console.warn('WebGL başlatılamadı', err);
 }
 hideLoader();
+restorePreviewScroll();
 
 const sections = [...document.querySelectorAll('[data-scene]')];
 const studio = $('#studyo');

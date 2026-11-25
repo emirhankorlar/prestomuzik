@@ -38,11 +38,25 @@
           <p class="hint" data-tab-hint></p>
         </div>
         <div class="bar-actions">
+          <button class="btn" data-pv-toggle type="button">Önizleme</button>
           <span class="status" data-status></span>
           <button class="btn primary" data-save disabled>Kaydet</button>
         </div>
       </header>
-      <div class="panel" data-panel></div>
+      <div class="workspace" data-workspace>
+        <div class="panel" data-panel></div>
+        <aside class="preview" data-preview hidden>
+          <div class="pv-bar">
+            <b>Canlı önizleme</b>
+            <span class="pv-note">Kaydetmeden de değişiklikler burada görünür</span>
+            <div class="pv-seg" role="group" aria-label="Cihaz">
+              <button data-dev="desktop" class="on" type="button">Bilgisayar</button>
+              <button data-dev="mobile" type="button">Telefon</button>
+            </div>
+          </div>
+          <div class="pv-stage"><iframe title="Site önizlemesi" data-frame></iframe></div>
+        </aside>
+      </div>
     </main>
   </div>
   <div class="toast" data-toast></div>

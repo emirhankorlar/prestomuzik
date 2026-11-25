@@ -59,6 +59,7 @@ function toast(msg, bad = false) {
 
 function setDirty(v = true) {
   dirty = v;
+  if (v) schedulePreview();
   $('[data-save]').disabled = !v;
   const s = $('[data-status]');
   s.textContent = v ? '● Kaydedilmemiş değişiklik' : 'Tümü kaydedildi';
@@ -330,7 +331,7 @@ function listEditor(schema, arr, rerender) {
     const [title, sub] = schema.summary(item);
     const thumb = schema.thumb?.(item);
     const stop = (fn) => (e) => { e.preventDefault(); e.stopPropagation(); fn(); };
-    const det = h('details', { class: 'item', open: open.has(item), ontoggle: (e) => (e.target.open ? open.add(item) : open.delete(item)) },
+    const det = h('details', { class: 'item', open: open.has(item), ontoggle: (e) => { if (e.target.open) { open.add(item); if (tab === 'artists') schedulePreview(); } else open.delete(item); } },
       h('summary', {},
         schema.thumb && (thumb ? h('img', { class: 'thumb', src: backend.preview(thumb), alt: '' }) : h('div', { class: 'thumb' })),
         h('span', { class: 't' }, title || '…', sub && h('small', {}, sub)),
@@ -418,6 +419,76 @@ function messagesPanel() {
     m.message && h('p', {}, m.message))));
 }
 
+/* ---------- canlı önizleme ---------- */
+
+const PV_KEY = 'pm_preview_on';
+const PV_PAGE = { services: '#hizmetler', gallery: '#studyo', clips: '#klipler', team: '#sanatcilar' };
+let pvOn = (() => { try { return localStorage.getItem(PV_KEY) !== '0'; } catch { return true; } })();
+let pvTimer = null, pvSrc = '', pvLoaded = false;
+const wide = matchMedia('(min-width: 1180px)');
+
+function pvTarget() {
+  if (tab === 'artists') {
+    const a = content.artists.find((x) => open.has(x)) || content.artists[0];
+    if (a?.slug) return `artist.html?id=${encodeURIComponent(a.slug)}&preview=1`;
+  }
+  if (tab === '_messages' || tab === '_settings') return null;
+  return `index.html?preview=1${PV_PAGE[tab] || ''}`;
+}
+
+function syncPreview(force = false, reload = false) {
+  const box = $('[data-preview]'), frame = $('[data-frame]');
+  const show = pvOn && wide.matches && !!content;
+  const target = show ? pvTarget() : null;
+  box.hidden = !target;
+  $('[data-workspace]').classList.toggle('split', !!target);
+  $('[data-pv-toggle]').hidden = !wide.matches;
+  $('[data-pv-toggle]').classList.toggle('on', pvOn);
+  if (!target) return;
+  fitFrame();
+  try { sessionStorage.setItem('pm_preview', JSON.stringify(content, (k, v) => (k.startsWith('_') ? undefined : v))); } catch { /* büyük içerik */ }
+  const base = target.replace(/#.*/, '');
+  if (base !== pvSrc.replace(/#.*/, '') || force || !pvLoaded) {
+    pvSrc = target; pvLoaded = false;
+    frame.src = target;
+  } else if (reload) {
+    // aynı sayfa: kaydırma konumunu koruyarak yenile
+    try { sessionStorage.setItem('pm_preview_y', String(frame.contentWindow.scrollY || 0)); } catch { /* yok */ }
+    pvLoaded = false;
+    frame.contentWindow.location.reload();
+  }
+}
+function schedulePreview() {
+  if (!pvOn || !wide.matches) return;
+  clearTimeout(pvTimer);
+  pvTimer = setTimeout(() => syncPreview(false, true), 700);
+}
+$('[data-pv-toggle]').addEventListener('click', () => {
+  pvOn = !pvOn;
+  try { localStorage.setItem(PV_KEY, pvOn ? '1' : '0'); } catch { /* gizli sekme */ }
+  syncPreview(true);
+});
+$('[data-frame]').addEventListener('load', () => { pvLoaded = true; });
+wide.addEventListener('change', () => syncPreview(true));
+// site gerçek genişliğinde (1280 / 390 px) çizilir, kutuya sığacak kadar küçültülür
+function fitFrame() {
+  const stage = $('.pv-stage'), frame = $('[data-frame]');
+  if (!stage || stage.clientWidth === 0) return;
+  const mobile = $('[data-preview]').classList.contains('is-mobile');
+  const w = mobile ? 390 : 1280;
+  const k = Math.min(1, (stage.clientWidth - (mobile ? 24 : 0)) / w);
+  frame.style.width = `${w}px`;
+  frame.style.height = `${stage.clientHeight / k}px`;
+  frame.style.transform = `scale(${k})`;
+  frame.style.marginLeft = mobile ? `${(stage.clientWidth - w * k) / 2}px` : '0';
+}
+new ResizeObserver(fitFrame).observe($('.pv-stage'));
+document.querySelectorAll('[data-dev]').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('[data-dev]').forEach((x) => x.classList.toggle('on', x === b));
+  $('[data-preview]').classList.toggle('is-mobile', b.dataset.dev === 'mobile');
+  fitFrame(); syncPreview(true);
+}));
+
 /* ---------- çizim ---------- */
 
 function render() {
@@ -445,6 +516,7 @@ function render() {
   else body = h('div', { class: 'fields' }, t.schema.fields.map((f) => field(f, target, render)));
   $('[data-panel]').replaceChildren(body);
   scrollTo(0, y);
+  syncPreview();
 }
 
 async function save() {

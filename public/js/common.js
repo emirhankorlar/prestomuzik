@@ -31,7 +31,22 @@ export const fmtTime = (s) => {
 
 export const ytThumb = (id) => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
 
+// Yönetim panelindeki canlı önizleme: panel, kaydedilmemiş içeriği sessionStorage'a yazar, site onu okur.
+const PREVIEW = new URLSearchParams(location.search).has('preview');
+export function restorePreviewScroll() {
+  if (!PREVIEW) return;
+  setTimeout(() => {
+    let y = 0;
+    try { y = Number(sessionStorage.getItem('pm_preview_y')) || 0; sessionStorage.removeItem('pm_preview_y'); } catch { /* yok */ }
+    if (y) scrollTo(0, y);
+    else if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  }, 120);
+}
+
 export async function loadContent() {
+  if (PREVIEW) {
+    try { const c = sessionStorage.getItem('pm_preview'); if (c) return withDefaults(JSON.parse(c)); } catch { /* canlı içeriğe düş */ }
+  }
   // kendi sunucumuzda API, GitHub Pages'te derleme sırasında kopyalanan content.json
   for (const url of ['api/content', 'content.json']) {
     try {
