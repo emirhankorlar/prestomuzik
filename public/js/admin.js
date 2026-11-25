@@ -16,6 +16,22 @@ const h = (tag, attrs = {}, ...kids) => {
   return el;
 };
 
+const I = (d) => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+const ICONS = {
+  artists: I('<circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3.1-6 7-6s7 2.4 7 6"/>'),
+  team: I('<circle cx="9" cy="8" r="3"/><path d="M3 19c0-3 2.7-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.4"/><path d="M17 14c2.5 0 4 1.7 4 4"/>'),
+  layout: I('<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M9 9.5V20"/>'),
+  site: I('<path d="M5 5h14M5 10h14M5 15h9M5 20h6"/>'),
+  services: I('<path d="M4 7h16M4 12h16M4 17h16"/>'),
+  gallery: I('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/>'),
+  clips: I('<rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M10.5 9.5v5l4.2-2.5z"/>'),
+  _messages: I('<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>'),
+  _settings: I('<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/>'),
+  up: I('<path d="M12 19V5M6 11l6-6 6 6"/>'), down: I('<path d="M12 5v14M6 13l6 6 6-6"/>'),
+  del: I('<path d="M5 7h14M10 7V4.5h4V7M7 7l.8 12h8.4L17 7"/>'),
+};
+const ico = (k) => h('span', { class: 'ico', innerHTML: ICONS[k] || '' });
+
 const slugify = (s) => String(s || '').replace(/[çğıöşüÇĞİÖŞÜ]/g, (c) => ({ ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', Ç: 'c', Ğ: 'g', İ: 'i', Ö: 'o', Ş: 's', Ü: 'u' }[c]))
   .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 const ytId = (s) => (/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/.exec(s) || /^([\w-]{11})$/.exec(String(s).trim()) || [])[1] || String(s).trim();
@@ -319,9 +335,9 @@ function listEditor(schema, arr, rerender) {
         schema.thumb && (thumb ? h('img', { class: 'thumb', src: backend.preview(thumb), alt: '' }) : h('div', { class: 'thumb' })),
         h('span', { class: 't' }, title || '…', sub && h('small', {}, sub)),
         h('span', { class: 'ctrls' },
-          h('button', { class: 'icon-btn', title: 'Yukarı', onclick: stop(() => move(i, -1)) }, '↑'),
-          h('button', { class: 'icon-btn', title: 'Aşağı', onclick: stop(() => move(i, 1)) }, '↓'),
-          !schema.fixed && h('button', { class: 'icon-btn', title: 'Sil', onclick: stop(() => { if (confirm(`“${title || 'Bu öğe'}” silinsin mi?`)) { arr.splice(i, 1); setDirty(); rerender(); } }) }, '✕'))),
+          h('button', { class: 'icon-btn', title: 'Yukarı', onclick: stop(() => move(i, -1)) }, ico('up')),
+          h('button', { class: 'icon-btn', title: 'Aşağı', onclick: stop(() => move(i, 1)) }, ico('down')),
+          !schema.fixed && h('button', { class: 'icon-btn del', title: 'Sil', onclick: stop(() => { if (confirm(`“${title || 'Bu öğe'}” silinsin mi?`)) { arr.splice(i, 1); setDirty(); rerender(); } }) }, ico('del')))),
       h('div', { class: 'item-body' }, h('div', { class: 'fields' }, schema.item.fields.map((f) => field(f, item, rerender)))));
     return det;
   });
@@ -390,11 +406,11 @@ function messagesPanel() {
     h('div', { class: 'msg-head' },
       h('b', {}, m.name), m.date > seen && h('span', { class: 'badge' }, 'Yeni'),
       h('span', { class: 'msg-meta' }, `${fmt(m.date)} · ${m.via === 'mail' ? 'E-posta butonu' : 'WhatsApp butonu'}`),
-      h('button', { class: 'icon-btn', title: 'Sil', onclick: async () => {
+      h('button', { class: 'icon-btn del', title: 'Sil', onclick: async () => {
         if (!confirm(`${m.name} adlı kişinin mesajı silinsin mi?`)) return;
         try { await call(() => backend.deleteMessage(m.id)); messages = messages.filter((x) => x !== m); render(); toast('Mesaj silindi'); }
         catch (err) { toast(err.message, true); }
-      } }, '✕')),
+      } }, ico('del'))),
     h('div', { class: 'msg-info' },
       m.phone && h('a', { href: `tel:${m.phone.replace(/\s/g, '')}` }, m.phone),
       m.phone && h('a', { href: `https://wa.me/${m.phone.replace(/\D/g, '').replace(/^0/, '90')}`, target: '_blank' }, 'WhatsApp ↗'),
@@ -407,9 +423,16 @@ function messagesPanel() {
 function render() {
   const tabs = TABS;
   const t = tabs.find((x) => x.key === tab);
-  const count = (x) => (x.key === '_messages' ? (unread() ? `${unread()} yeni` : null) : Array.isArray(content[x.key]) ? content[x.key].length : null);
-  $('[data-tabs]').replaceChildren(...tabs.map((x) => h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
-    x.label, count(x) != null && h('span', {}, count(x)))));
+  const count = (x) => (x.key === '_messages' ? (unread() ? unread() : null) : Array.isArray(content[x.key]) ? content[x.key].length : null);
+  const groups = { artists: 'İçerik', layout: 'Site', _messages: 'Gelen kutusu' };
+  const nodes = [];
+  tabs.forEach((x) => {
+    if (groups[x.key]) nodes.push(h('div', { class: 'tab-group' }, groups[x.key]));
+    const c = count(x);
+    nodes.push(h('button', { class: x.key === tab ? 'on' : '', onclick: () => { tab = x.key; render(); scrollTo(0, 0); } },
+      ico(x.key), h('span', { class: 'lbl' }, x.label), c != null && h('span', { class: `count${x.key === '_messages' ? ' new' : ''}` }, c)));
+  });
+  $('[data-tabs]').replaceChildren(...nodes);
   $('[data-tab-title]').textContent = t.label;
   $('[data-tab-hint]').textContent = t.hint;
   const y = scrollY;
