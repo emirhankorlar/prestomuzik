@@ -69,7 +69,7 @@
         "title": "Notaların ötesinde bir anlatım.",
         "text": "",
         "scene": "wave",
-        "fade": 0.45
+        "fade": 0.28
       },
       {
         "id": "services",
@@ -81,7 +81,7 @@
         "title": "Hizmet listesi",
         "text": "Fikirden yayına tek çatı altında: kayıt, prodüksiyon, mix & mastering, görsel ve dağıtım.",
         "scene": "wave",
-        "fade": 0.45
+        "fade": 0.26
       },
       {
         "id": "studio",
@@ -93,7 +93,7 @@
         "title": "İçeriden bir tur",
         "text": "Stüdyoyu gezmeye gel",
         "scene": "wave",
-        "fade": 0.3
+        "fade": 0.2
       },
       {
         "id": "artists",
@@ -105,7 +105,7 @@
         "title": "Presto kadrosu",
         "text": "Stüdyomuzda üreten, Presto çatısı altında yayınlanan sanatçılar ve ekibimiz. Plağı çek, dinlemeye başla.",
         "scene": "vinyl",
-        "fade": 0.4
+        "fade": 0.24
       },
       {
         "id": "tracks",
@@ -117,7 +117,7 @@
         "title": "Son çıkanlar — dinle.",
         "text": "",
         "scene": "vinyl",
-        "fade": 0.4
+        "fade": 0.24
       },
       {
         "id": "clips",
@@ -129,7 +129,7 @@
         "title": "Çektiğimiz klipler",
         "text": "YouTube'da izle",
         "scene": "vinyl",
-        "fade": 0.35
+        "fade": 0.22
       },
       {
         "id": "contact",
@@ -141,7 +141,7 @@
         "title": "Aynı notada buluşalım.",
         "text": "",
         "scene": "wave",
-        "fade": 0.45
+        "fade": 0.26
       }
     ],
     "artistsLabel": "Sanatçılar"

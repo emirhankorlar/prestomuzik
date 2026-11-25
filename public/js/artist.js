@@ -5,7 +5,7 @@ import { initPortrait } from './artist3d.js';
 const $ = (s, r = document) => r.querySelector(s);
 
 const content = await loadContent();
-const slug = new URLSearchParams(location.search).get('id') || '';
+const slug = new URLSearchParams(location.search).get('id') || decodeURIComponent((/\/sanatci\/([^/]+)/.exec(location.pathname) || [])[1] || '');
 const artist = content.artists.find((a) => a.slug === slug);
 if (!artist) location.replace('index.html#sanatcilar');
 
@@ -71,7 +71,7 @@ clampRows($('[data-videos]'), $('[data-more]'));
 const others = content.artists.filter((a) => a.slug !== artist.slug);
 if (!others.length) document.querySelector('.a-others').remove();
 $('[data-others]').innerHTML = others.map((a, i) => `
-  <a class="sleeve sleeve--sm reveal" href="artist.html?id=${esc(a.slug)}" style="--accent:${esc(a.accent || content.site.colors.accent)}">
+  <a class="sleeve sleeve--sm reveal" href="/sanatci/${esc(a.slug)}" style="--accent:${esc(a.accent || content.site.colors.accent)}">
     <div class="sleeve-stage">
       <div class="vinyl"><img src="${esc(a.tracks?.[0]?.cover || a.image)}" alt=""></div>
       <div class="sleeve-cover">

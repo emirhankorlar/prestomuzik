@@ -4,13 +4,13 @@
 // Ana sayfa bölümleri: id sabit, sıra / menü / başlık / arka plan panelden değişir.
 // scene: arka plandaki 3D efekt (wave = nokta dalgası, vinyl = plak), fade: 0..1 parlaklık
 export const SECTION_DEFAULTS = {
-  about: { anchor: 'hakkimizda', name: 'Hakkımızda', title: 'Notaların ötesinde bir anlatım.', scene: 'wave', fade: 0.45, menu: false },
-  services: { anchor: 'hizmetler', name: 'Hizmetler', label: 'Neler yapıyoruz', title: 'Hizmet listesi', text: 'Fikirden yayına tek çatı altında: kayıt, prodüksiyon, mix & mastering, görsel ve dağıtım.', scene: 'wave', fade: 0.45, menu: true },
-  studio: { anchor: 'studyo', name: 'Stüdyo', title: 'İçeriden bir tur', text: 'Stüdyoyu gezmeye gel', scene: 'wave', fade: 0.3, menu: true },
-  artists: { anchor: 'sanatcilar', name: 'Sanatçılar', label: 'Kadro', title: 'Presto kadrosu', text: 'Stüdyomuzda üreten, Presto çatısı altında yayınlanan sanatçılar ve ekibimiz. Plağı çek, dinlemeye başla.', scene: 'vinyl', fade: 0.4, menu: true },
-  tracks: { anchor: 'dinle', name: 'Dinle', label: 'Stüdyodan çıkanlar', title: 'Son çıkanlar — dinle.', scene: 'vinyl', fade: 0.4, menu: false },
-  clips: { anchor: 'klipler', name: 'Klipler', label: 'Presto Medya', title: 'Çektiğimiz klipler', text: "YouTube'da izle", scene: 'vinyl', fade: 0.35, menu: true },
-  contact: { anchor: 'iletisim', name: 'İletişim', title: 'Aynı notada buluşalım.', scene: 'wave', fade: 0.45, menu: false },
+  about: { anchor: 'hakkimizda', name: 'Hakkımızda', title: 'Notaların ötesinde bir anlatım.', scene: 'wave', fade: 0.28, menu: false },
+  services: { anchor: 'hizmetler', name: 'Hizmetler', label: 'Neler yapıyoruz', title: 'Hizmet listesi', text: 'Fikirden yayına tek çatı altında: kayıt, prodüksiyon, mix & mastering, görsel ve dağıtım.', scene: 'wave', fade: 0.28, menu: true },
+  studio: { anchor: 'studyo', name: 'Stüdyo', title: 'İçeriden bir tur', text: 'Stüdyoyu gezmeye gel', scene: 'wave', fade: 0.2, menu: true },
+  artists: { anchor: 'sanatcilar', name: 'Sanatçılar', label: 'Kadro', title: 'Presto kadrosu', text: 'Stüdyomuzda üreten, Presto çatısı altında yayınlanan sanatçılar ve ekibimiz. Plağı çek, dinlemeye başla.', scene: 'vinyl', fade: 0.24, menu: true },
+  tracks: { anchor: 'dinle', name: 'Dinle', label: 'Stüdyodan çıkanlar', title: 'Son çıkanlar — dinle.', scene: 'vinyl', fade: 0.24, menu: false },
+  clips: { anchor: 'klipler', name: 'Klipler', label: 'Presto Medya', title: 'Çektiğimiz klipler', text: "YouTube'da izle", scene: 'vinyl', fade: 0.22, menu: true },
+  contact: { anchor: 'iletisim', name: 'İletişim', title: 'Aynı notada buluşalım.', scene: 'wave', fade: 0.28, menu: false },
 };
 
 export const COLOR_DEFAULTS = { accent: '#ff8a1f', accent2: '#ff3b2f', logo1: '#ff8a1f', logo2: '#ffffff' };

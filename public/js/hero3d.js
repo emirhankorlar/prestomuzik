@@ -29,9 +29,11 @@ const vertex = /* glsl */ `
     logo.x += uLogoX;
     vec2 d = logo.xy - uMouse;
     float md = length(d);
+    // fare: %70 daha hafif, dalga gibi yayılan halka (itme yok)
     float push = smoothstep(1.2, 0.0, md);
-    logo.xy += normalize(d + 1e-4) * push * 0.5;
-    logo.z += push * 0.9 * (aRand - 0.3);
+    float ripple = sin(md * 7.0 - t * 5.0);
+    logo.xy += normalize(d + 1e-4) * push * 0.045 * ripple;
+    logo.z += push * 0.27 * ripple;
 
     // 2) ses dalgası arazisi
     vec3 field = aField;
@@ -114,16 +116,19 @@ async function sampleLogo(url, res, height) {
 
 export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 1.1 }) {
   const mobile = innerWidth < 760;
+  // zayıf cihaz: az çekirdek / düşük bellek / veri tasarrufu → daha az parçacık, düşük çözünürlük
+  const weak = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4 || navigator.connection?.saveData;
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 2));
+  let pr = Math.min(devicePixelRatio, weak ? 1 : mobile ? 1.5 : 2);
+  renderer.setPixelRatio(pr);
   renderer.setClearColor(0x000000, 0); // şeffaf: arkadaki stüdyo fotoğrafı görünsün
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
 
-  const logoH = 4.4 * Math.min(1.4, Math.max(0.6, logoScale));
-  const logo2d = await sampleLogo(logoUrl, mobile ? 150 : 220, logoH);
-  const layers = 2;
+  const logoH = 4.4 * Math.min(1.4, Math.max(0.6, logoScale)) * (mobile ? 0.58 : 1); // mobilde küçük: başlıkla çakışmasın
+  const logo2d = await sampleLogo(logoUrl, weak ? 110 : mobile ? 150 : 220, logoH);
+  const layers = weak ? 1 : 2;
   const N = (logo2d.length / 2) * layers;
 
   const aLogo = new Float32Array(N * 3);
@@ -138,7 +143,7 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
     const layer = Math.floor(i / (logo2d.length / 2));
     aLogo[i * 3] = logo2d[s] + (Math.random() - 0.5) * 0.02;
     aLogo[i * 3 + 1] = logo2d[s + 1] + (Math.random() - 0.5) * 0.02;
-    aLogo[i * 3 + 2] = (layer / (layers - 1) - 0.5) * 0.45 + (Math.random() - 0.5) * 0.12;
+    aLogo[i * 3 + 2] = (layer / Math.max(1, layers - 1) - 0.5) * 0.45 + (Math.random() - 0.5) * 0.12;
 
     // her parçacık için ızgarada rastgele bir hücre (karışık dağılım geçişi güzelleştirir)
     const gi = (i * 7919) % (cols * rows);
@@ -162,7 +167,7 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
 
   const uniforms = {
     uTime: { value: 0 }, uMorph: { value: 0 }, uIntro: { value: reducedMotion ? 1 : 0 },
-    uSize: { value: mobile ? 0.1 : 0.088 }, uPixel: { value: 0 },
+    uSize: { value: mobile ? 0.075 : 0.088 }, uPixel: { value: 0 },
     uBass: { value: 0 }, uMid: { value: 0 }, uLevel: { value: 0 },
     uMouse: { value: new THREE.Vector2(99, 99) }, uLogoX: { value: 0 },
     uColA: { value: new THREE.Color(colors.logo1 || '#ff8a1f') }, uColB: { value: new THREE.Color(colors.logo2 || '#ffffff') },
@@ -193,7 +198,7 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
 
   // kamera durakları: logo → arazi → plak
   const shots = [
-    { pos: new THREE.Vector3(0, 0, mobile ? 11.5 : 8.6), look: new THREE.Vector3(0, mobile ? -0.4 : -0.2, 0) },
+    { pos: new THREE.Vector3(0, 0, mobile ? 11.5 : 8.6), look: new THREE.Vector3(0, mobile ? -0.9 : -0.2, 0) },
     { pos: new THREE.Vector3(0, 1.4, 7.2), look: new THREE.Vector3(0, -1.3, 0) },
     { pos: new THREE.Vector3(0, 3.6, 5.6), look: new THREE.Vector3(0, 0.2, 0) },
   ];
@@ -208,7 +213,7 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
     uniforms.uPixel.value = h * renderer.getPixelRatio() * 0.5;
     // geniş ekranda logo sağa kayar, başlıkla çakışmaz ve ekrandan taşmaz
     const halfW = Math.tan(THREE.MathUtils.degToRad(20)) * shots[0].pos.z * camera.aspect;
-    uniforms.uLogoX.value = w / h > 1.25 ? Math.max(0, Math.min(halfW - logo2d.halfW - 0.8, (w / h) * 1.6)) : 0;
+    uniforms.uLogoX.value = w / h > 1.25 ? Math.max(0, Math.min(halfW - logo2d.halfW - 0.8, (w / h) * 1.6)) : Math.max(0, Math.min(halfW - logo2d.halfW - 0.35, 0.7)); // dar ekranda da masaüstü gibi hafif sağda
   };
   resize();
   addEventListener('resize', resize);
@@ -230,7 +235,27 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
   const lerp = (a, b, t) => a + (b - a) * t;
   const ease = (t) => t * t * (3 - 2 * t);
 
+  // kare hızı düşerse sırayla: çözünürlüğü azalt → parçacıkları seyrelt (kendini ayarlar)
+  let fpsT = performance.now(), fpsN = 0, quality = 1, settle = 0;
+  const total = geo.attributes.position.count;
+  function adapt(now) {
+    fpsN++;
+    if (now - fpsT < 1200) return;
+    const fps = (fpsN * 1000) / (now - fpsT);
+    fpsT = now; fpsN = 0;
+    if (++settle < 2) return; // açılış animasyonu sırasında ölçme
+    if (fps < 40 && quality > 0.35) {
+      quality = Math.max(0.35, quality - 0.2);
+      if (pr > 1) { pr = 1; renderer.setPixelRatio(1); resize(); }
+      geo.setDrawRange(0, Math.floor(total * quality));
+    }
+  }
+  let running = true;
+  document.addEventListener('visibilitychange', () => { running = !document.hidden; if (running) { clock.getDelta(); frame(); } });
+
   function frame() {
+    if (!running) return;
+    adapt(performance.now());
     const dt = Math.min(clock.getDelta(), 0.05);
     uniforms.uTime.value += dt;
     const lv = player.levels();

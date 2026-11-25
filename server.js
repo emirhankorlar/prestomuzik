@@ -9,6 +9,7 @@ const path = require('path');
 const crypto = require('crypto');
 const spotify = require('./lib/spotify');
 const { cleanMessage } = require('./lib/messages');
+const { renderArtistPage, sitemap, originOf } = require('./lib/seo');
 
 const ROOT = __dirname;
 const PUBLIC = path.join(ROOT, 'public');
@@ -208,7 +209,15 @@ async function serveStatic(req, res, pathname) {
   let rel = decodeURIComponent(pathname);
   // eski adresler: /admin ve /sanatci/<slug> → göreli yollarla çalışan sayfalara yönlendir
   const old = /^\/sanatci\/([^/]+)\/?$/.exec(rel);
-  if (old) { res.writeHead(301, { Location: `/artist.html?id=${encodeURIComponent(old[1])}` }); return res.end(); }
+  if (old) {
+    const content = JSON.parse(await fsp.readFile(CONTENT, 'utf8'));
+    const html = await fsp.readFile(path.join(PUBLIC, 'artist.html'), 'utf8');
+    return send(res, 200, renderArtistPage(html, content, old[1], originOf(req)), { 'Content-Type': MIME['.html'], 'Cache-Control': 'no-cache' });
+  }
+  if (rel === '/sitemap.xml') {
+    const content = JSON.parse(await fsp.readFile(CONTENT, 'utf8'));
+    return send(res, 200, sitemap(content, originOf(req)), { 'Content-Type': 'application/xml; charset=utf-8' });
+  }
   if (rel === '/admin' || rel === '/admin/') { res.writeHead(302, { Location: '/admin.html' }); return res.end(); }
   if (rel === '/') rel = '/index.html';
 

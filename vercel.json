@@ -4,11 +4,30 @@
   "buildCommand": "",
   "outputDirectory": "public",
   "functions": {
-    "api/spotify.js": { "maxDuration": 60 },
-    "api/upload.js": { "maxDuration": 30 }
+    "api/spotify.js": {
+      "maxDuration": 60
+    },
+    "api/upload.js": {
+      "maxDuration": 30
+    },
+    "api/artist.js": {
+      "includeFiles": "public/artist.html"
+    }
   },
   "redirects": [
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/sanatci/:slug", "destination": "/artist.html?id=:slug", "permanent": true }
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/sanatci/:id",
+      "destination": "/api/artist?id=:id"
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    }
   ]
 }
