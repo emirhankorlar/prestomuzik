@@ -9,7 +9,7 @@
     "seed": "node scripts/seed.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": "24.x"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.2"

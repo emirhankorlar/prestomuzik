@@ -236,16 +236,17 @@ export async function initHeroScene(canvas, { logoUrl, colors = {}, logoScale = 
   const ease = (t) => t * t * (3 - 2 * t);
 
   // kare hızı düşerse sırayla: çözünürlüğü azalt → parçacıkları seyrelt (kendini ayarlar)
-  let fpsT = performance.now(), fpsN = 0, quality = 1, settle = 0;
+  let fpsT = performance.now(), fpsN = 0, quality = weak ? 0.5 : mobile ? 0.65 : 1, settle = 0;
   const total = geo.attributes.position.count;
+  geo.setDrawRange(0, Math.floor(total * quality));
   function adapt(now) {
     fpsN++;
-    if (now - fpsT < 1200) return;
+    if (now - fpsT < 900) return;
     const fps = (fpsN * 1000) / (now - fpsT);
     fpsT = now; fpsN = 0;
     if (++settle < 2) return; // açılış animasyonu sırasında ölçme
-    if (fps < 40 && quality > 0.35) {
-      quality = Math.max(0.35, quality - 0.2);
+    if (fps < 50 && quality > 0.3) {
+      quality = Math.max(0.3, quality - 0.15);
       if (pr > 1) { pr = 1; renderer.setPixelRatio(1); resize(); }
       geo.setDrawRange(0, Math.floor(total * quality));
     }

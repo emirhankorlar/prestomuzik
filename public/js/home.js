@@ -26,7 +26,7 @@ for (const s of site.sections) {
   if (!s.visible) { el.hidden = true; continue; }
   ch += 1;
   el.dataset.scene = s.scene === 'vinyl' ? 2 : 1;
-  el.dataset.fade = s.fade;
+  el.dataset.fade = s.fade * 0.6; // arka plan efekti: kayıtlı değerden bağımsız ek soluklaştırma
   $('[data-ch]', el).textContent = s.channel || `CH-${String(ch).padStart(2, '0')}`;
   $('[data-label]', el).textContent = s.label;
   $('[data-title]', el).innerHTML = accentTitle(s.title);
@@ -247,9 +247,11 @@ if (!isTouch) {
   const follow = () => {
     px += (tx - px) * 0.14; py += (ty - py) * 0.14;
     prev.style.left = `${px}px`; prev.style.top = `${py}px`;
-    requestAnimationFrame(follow);
+    if (prev.classList.contains('is-on') || Math.abs(tx - px) > 1) requestAnimationFrame(follow); else following = false;
   };
-  follow();
+  let following = false;
+  const kick = () => { if (!following) { following = true; follow(); } };
+  document.querySelectorAll('.svc').forEach((row) => row.addEventListener('pointerenter', kick));
 }
 
 // galeri: tıklayınca büyük aç, tekrar tıklayınca / X / Esc ile kapat
